@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "declaration": true,
+    "target": "es6",
+    "module": "esnext",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "paths": {
+      "@codefreak/*": ["*/src"]
+    }
+  }
+}
