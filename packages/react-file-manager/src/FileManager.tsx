@@ -160,7 +160,6 @@ const FileManager = <T extends FileManagerNode>(
       },
       className: isSelected ? 'selected-row' : '',
       canDropNode: source => {
-        console.log(isFileDrop(source))
         // allow file drops on all node types
         if (isFileDrop(source)) return true
         // only ever allow moves/drops to directories and never on dir itself
