@@ -27,7 +27,10 @@ Default.args = {
   files: exampleFiles
 }
 Default.argTypes = {
-  onMove: { action: 'moved' }
+  onMove: { action: 'moved' },
+  onClick: { action: 'clicked' },
+  onDoubleClick: { action: 'double clicked' },
+  onFilesDrop: { action: 'dropped file(s)' }
 }
 
 export default {

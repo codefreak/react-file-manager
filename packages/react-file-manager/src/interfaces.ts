@@ -30,6 +30,16 @@ export interface FileManagerProps<T extends FileManagerNode> {
   selectedPaths?: string[]
   additionalColumns?: ColumnsType<T>
   files: T[]
+  /**
+   * @param files
+   * @param dataTransferItemList
+   * @param target undefined if drop on root
+   */
+  onFilesDrop?: (
+    files: File[],
+    dataTransferItemList: DataTransferItemList,
+    target?: T
+  ) => void
   onMove?: (nodes: T[], target: T) => void
   // onRename?: RenameFunc<T>
   // onCreate?: (node: FileManagerNode, content?: Blob) => Promise<void>

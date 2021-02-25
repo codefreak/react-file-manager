@@ -92,11 +92,7 @@ const FileManagerRow = <T extends FileManagerNode>(
     }
   })
   const [, drag, preview] = useDrag({ item: node })
-  if (node.type === 'directory') {
-    drag(drop(ref))
-  } else {
-    drag(ref)
-  }
+  drag(drop(ref))
   useEffect(() => {
     // hide default drag preview
     preview(getEmptyImage(), { captureDraggingState: true })
@@ -151,7 +147,7 @@ const FileManager = <T extends FileManagerNode>(
   const getAdditionalRowProps = (node: T) => {
     const isSelected = selectedPaths.indexOf(node.path) !== -1
     return {
-      node: node,
+      node,
       onDoubleClick: () => {
         if (props.onDoubleClick) {
           props.onDoubleClick(node)
@@ -164,6 +160,7 @@ const FileManager = <T extends FileManagerNode>(
       },
       className: isSelected ? 'selected-row' : '',
       canDropNode: source => {
+        console.log(isFileDrop(source))
         // allow file drops on all node types
         if (isFileDrop(source)) return true
         // only ever allow moves/drops to directories and never on dir itself
@@ -187,9 +184,14 @@ const FileManager = <T extends FileManagerNode>(
         }
       },
       onFilesDrop: (files, dataTransfer) => {
-        // native files can also be dropped on file nodes! not only dirs
-        // drop on file means "upload to current directory"
-        console.log(dataTransfer)
+        if (!props.onFilesDrop) return
+        if (node.type === 'directory') {
+          props.onFilesDrop(files, dataTransfer, node)
+        } else {
+          // indicate drop on root ("current directory") by leaving out the
+          // target node
+          props.onFilesDrop(files, dataTransfer)
+        }
       }
     } as AdditionalRowRenderProps<T>
   }
