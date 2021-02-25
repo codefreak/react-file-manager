@@ -56,7 +56,10 @@ const CustomDragLayer = (props: CustomDragLayerProps) => {
     return null
   }
 
-  const { x, y } = clientOffset
+  // TODO: this will depend on which is the scrolling element and the overlay offset technique
+  const scrollingElement = document.scrollingElement
+  const x = clientOffset.x + (scrollingElement?.scrollLeft || 0)
+  const y = clientOffset.y + (scrollingElement?.scrollTop || 0)
   return renderer(x, y, items)
 }
 
@@ -105,6 +108,7 @@ const FileManager = <T extends FileManagerNode>(
 ): React.ReactElement => {
   const { files, additionalColumns } = props
   const selectedPaths = props.selectedPaths || []
+  const dragWrapRef = useRef<HTMLDivElement>(null)
 
   const renderActions = props.renderActions || defaultActionRenderer
   const iconRenderer = props.renderIcon || defaultIconRenderer
