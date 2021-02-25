@@ -7,22 +7,20 @@ import {
 } from 'react-dnd-html5-backend'
 import { ColumnsType } from 'rc-table/es/interface'
 import {
-  TableProps,
   AdditionalRowRenderProps,
+  CustomDragLayerProps,
+  DropItemOrFile,
+  FileDropItem,
   FileManagerNode,
   FileManagerProps,
-  DropItemOrFile,
-  FileDropItem
+  TableProps
 } from './interfaces'
 import {
+  defaultActionRenderer,
+  defaultCustomDragLayerRenderer,
   defaultIconRenderer,
-  defaultTableRenderer,
-  defaultActionRenderer
+  defaultTableRenderer
 } from './defaults'
-
-interface CustomDragLayerProps {
-  selectedPaths: string[]
-}
 
 const isMultiMove = (selectedPaths: string[], draggedItemPath: string) => {
   return (
@@ -31,7 +29,7 @@ const isMultiMove = (selectedPaths: string[], draggedItemPath: string) => {
 }
 
 const CustomDragLayer = (props: CustomDragLayerProps) => {
-  const { selectedPaths } = props
+  const { selectedPaths, renderer } = props
   const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
@@ -39,41 +37,27 @@ const CustomDragLayer = (props: CustomDragLayerProps) => {
     clientOffset: monitor.getClientOffset()
   }))
 
+  const items = useMemo((): string[] => {
+    if (!item) {
+      return []
+    }
+    if (isFileDrop(item)) {
+      // on hover we only get basic information about number of files and
+      // the mime-type of the files
+      return new Array(item.items.length).fill('')
+    }
+    if (isMultiMove(selectedPaths, item.path)) {
+      return selectedPaths
+    }
+    return [item.path]
+  }, [item, selectedPaths])
+
   if (!isDragging || !clientOffset) {
     return null
   }
 
-  const renderTitle = () => {
-    if (isFileDrop(item)) {
-      // on hover we only get basic information about number of files and
-      // the mime-type of the files
-      return item.items.length.toString()
-    }
-    if (isMultiMove(selectedPaths, item.path)) {
-      return selectedPaths.join(', ')
-    }
-    return item.path
-  }
-
   const { x, y } = clientOffset
-  return (
-    <h2
-      style={{
-        display: 'inline-block',
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        transform: `translate(${x}px, ${y}px)`,
-        zIndex: 999,
-        padding: '10px 20px',
-        border: '1px solid grey',
-        backgroundColor: 'red',
-        pointerEvents: 'none' // prevent drop event on overlay
-      }}
-    >
-      {renderTitle()}
-    </h2>
-  )
+  return renderer(x, y, items)
 }
 
 const isFileDrop = (obj: unknown): obj is FileDropItem => {
@@ -224,10 +208,15 @@ const FileManager = <T extends FileManagerNode>(
     onRow: getAdditionalRowProps
   }
   const tableRenderer = props.renderTable || defaultTableRenderer
+  const dragLayerRenderer =
+    props.dragLayerRenderer || defaultCustomDragLayerRenderer
   return (
     <div>
       <DndProvider backend={HTML5Backend}>
-        <CustomDragLayer selectedPaths={selectedPaths} />
+        <CustomDragLayer
+          selectedPaths={selectedPaths}
+          renderer={dragLayerRenderer}
+        />
         {tableRenderer(tableProps)}
       </DndProvider>
     </div>

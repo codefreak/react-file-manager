@@ -40,6 +40,7 @@ export interface FileManagerProps<T extends FileManagerNode> {
   renderIcon?: (node: T) => React.ReactNode | undefined
   renderTable?: (props: TableProps<T>) => React.ReactElement
   renderActions?: (props: RowActionProps) => React.ReactElement
+  dragLayerRenderer?: FileManagerDragLayerRenderer
 }
 
 export interface FileDropItem {
@@ -57,4 +58,13 @@ export interface AdditionalRowRenderProps<T extends FileManagerNode>
   onNodeDrop: (source: T) => void
   canDropNode: (source: DropItemOrFile<T>) => boolean
   onFilesDrop: (files: File[], dataTransfer: DataTransferItemList) => void
+}
+
+export interface FileManagerDragLayerRenderer {
+  (x: number, y: number, draggedItems: string[]): React.ReactElement
+}
+
+export interface CustomDragLayerProps {
+  selectedPaths: string[]
+  renderer: FileManagerDragLayerRenderer
 }

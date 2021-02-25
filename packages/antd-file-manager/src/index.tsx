@@ -1,14 +1,41 @@
 import FileManager, {
+  FileManagerDragLayerRenderer,
   FileManagerNode,
   FileManagerProps,
   TableProps
 } from '@codefreak/react-file-manager'
 import React, { useState } from 'react'
-import { Table } from 'antd'
+import { Badge, Table } from 'antd'
 import { FileTextFilled, FolderFilled } from '@ant-design/icons'
 import { ColumnsType } from 'rc-table/es/interface'
 
 export * from '@codefreak/react-file-manager'
+
+const antdDragLayerRenderer: FileManagerDragLayerRenderer = (x, y, items) => {
+  let dragContent = <FileTextFilled style={{ fontSize: '1.5em' }} />
+  // wrap in badge if multiple items are dragged
+  if (items.length > 1) {
+    dragContent = (
+      <Badge count={items.length} size="small">
+        {dragContent}
+      </Badge>
+    )
+  }
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        transform: `translate(${x}px, ${y}px)`,
+        zIndex: 999,
+        pointerEvents: 'none'
+      }}
+    >
+      {dragContent}
+    </div>
+  )
+}
 
 const antdIconRenderer = <T extends FileManagerNode>(node: T) => {
   if (node.type === 'directory') {
@@ -62,6 +89,7 @@ const AntdFileManager = <T extends FileManagerNode>(
       selectedPaths={selectedRows}
       renderTable={renderAntdTable}
       renderIcon={antdIconRenderer}
+      dragLayerRenderer={antdDragLayerRenderer}
       onClick={onClick}
     />
   )
