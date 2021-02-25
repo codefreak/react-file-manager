@@ -4,10 +4,7 @@ import { Meta, Story } from '@storybook/react'
 
 import 'antd/dist/antd.css'
 import { FileManagerNode } from '@codefreak/react-file-manager/dist/interfaces'
-
-const Template: Story<FileManagerProps<FileManagerNode>> = props => (
-  <AntdFileManager {...props} />
-)
+import { useState } from 'react'
 
 const exampleFiles: FileManagerNode[] = [
   {
@@ -23,6 +20,26 @@ const exampleFiles: FileManagerNode[] = [
     type: 'directory'
   }
 ]
+
+const Template: Story<FileManagerProps<FileManagerNode>> = props => {
+  const { onFilesDrop, files: initialFiles, ...restProps } = props
+  const [files, setFiles] = useState(initialFiles)
+  const onDrop: typeof onFilesDrop = (newFiles, dataTransfer, target) => {
+    if (target === undefined) {
+      const addFiles = newFiles.map(
+        (file): FileManagerNode => ({
+          path: file.name,
+          type: 'file'
+        })
+      )
+      setFiles([...addFiles, ...files])
+    }
+    if (onFilesDrop) {
+      onFilesDrop(newFiles, dataTransfer, target)
+    }
+  }
+  return <AntdFileManager files={files} onFilesDrop={onDrop} {...restProps} />
+}
 
 export const Default = Template.bind({})
 Default.args = {
