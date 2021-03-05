@@ -5,9 +5,9 @@ import FileManager, {
   TableProps
 } from '@codefreak/react-file-manager'
 import React, { useState } from 'react'
-import { Badge, Table } from 'antd'
-import { FileTextFilled, FolderFilled } from '@ant-design/icons'
-import { ColumnsType } from 'rc-table/es/interface'
+import { Badge, Button, Dropdown, Input, Menu, Table } from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import { FileTextFilled, FolderFilled, MoreOutlined } from '@ant-design/icons'
 
 export * from '@codefreak/react-file-manager'
 
@@ -37,19 +37,18 @@ const antdDragLayerRenderer: FileManagerDragLayerRenderer = (x, y, items) => {
   )
 }
 
-const antdIconRenderer = <T extends FileManagerNode>(node: T) => {
+const antdIconRenderer = <T extends FileManagerNode>(_: any, node: T) => {
   if (node.type === 'directory') {
     return <FolderFilled style={{ fontSize: '1.5em' }} />
   }
   return <FileTextFilled style={{ fontSize: '1.5em' }} />
 }
 
-type Writeable<T> = { -readonly [P in keyof T]: T[P] }
-
 const AntdFileManager = <T extends FileManagerNode>(
   props: FileManagerProps<T>
 ): React.ReactElement => {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const [renaming, setRenaming] = useState<string | undefined>(undefined)
 
   const onClick = (node: T) => {
     const index = selectedRows.indexOf(node.path)
@@ -64,8 +63,60 @@ const AntdFileManager = <T extends FileManagerNode>(
     }
   }
 
-  const renderAntdTable = (props: TableProps<T>) => {
-    const { data, columns, ...restProps } = props
+  const AntdTable = (props: TableProps<T>) => {
+    const { data, ...restProps } = props
+
+    const renderActions = (_: any, node: T) => {
+      const onClickRename = () => setRenaming(node.path)
+      const menu = (
+        <Menu>
+          <Menu.Item>Delete</Menu.Item>
+          <Menu.Item onClick={onClickRename}>Rename</Menu.Item>
+        </Menu>
+      )
+      return (
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button size="small" icon={<MoreOutlined />} />
+        </Dropdown>
+      )
+    }
+
+    const renderTitle = (_: any, node: T) => {
+      if (node.path === renaming) {
+        return (
+          <Input
+            size="small"
+            defaultValue={node.path}
+            autoFocus
+            onFocus={e => {
+              e.target.select()
+            }}
+          />
+        )
+      }
+      return <span>{node.path}</span>
+    }
+
+    const columns: ColumnsType<T> = [
+      {
+        key: 'icon',
+        render: antdIconRenderer,
+        width: 1
+      },
+      {
+        key: 'name',
+        title: 'Name',
+        sorter: (a: T, b: T) => a.path.localeCompare(b.path),
+        defaultSortOrder: 'ascend',
+        render: renderTitle
+      },
+      {
+        key: 'actions',
+        render: renderActions,
+        width: 1
+      }
+    ]
+
     return (
       <Table
         rowSelection={{
@@ -76,8 +127,8 @@ const AntdFileManager = <T extends FileManagerNode>(
           }
         }}
         dataSource={data}
-        columns={columns as Writeable<ColumnsType<T>>}
         {...restProps}
+        columns={columns}
         pagination={false}
       />
     )
@@ -87,9 +138,7 @@ const AntdFileManager = <T extends FileManagerNode>(
     <FileManager
       {...props}
       selectedPaths={selectedRows}
-      renderTable={renderAntdTable}
-      renderIcon={antdIconRenderer}
-      dragLayerRenderer={antdDragLayerRenderer}
+      tableElement={AntdTable}
       onClick={onClick}
     />
   )

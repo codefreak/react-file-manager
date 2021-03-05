@@ -22,9 +22,17 @@ const exampleFiles: FileManagerNode[] = [
 ]
 
 const Template: Story<FileManagerProps<FileManagerNode>> = props => {
-  const { onFilesDrop, files: initialFiles, ...restProps } = props
-  const [files, setFiles] = useState(initialFiles)
-  const onDrop: typeof onFilesDrop = (newFiles, dataTransfer, target) => {
+  const {
+    onDropFiles: originalOnDropFiles,
+    data: initialFiles,
+    ...restProps
+  } = props
+  const [files, setFiles] = useState(initialFiles || [])
+  const onDropFiles: typeof originalOnDropFiles = (
+    newFiles,
+    dataTransfer,
+    target
+  ) => {
     if (target === undefined) {
       const addFiles = newFiles.map(
         (file): FileManagerNode => ({
@@ -34,22 +42,22 @@ const Template: Story<FileManagerProps<FileManagerNode>> = props => {
       )
       setFiles([...addFiles, ...files])
     }
-    if (onFilesDrop) {
-      onFilesDrop(newFiles, dataTransfer, target)
+    if (originalOnDropFiles) {
+      originalOnDropFiles(newFiles, dataTransfer, target)
     }
   }
-  return <AntdFileManager files={files} onFilesDrop={onDrop} {...restProps} />
+  return (
+    <AntdFileManager data={files} onDropFiles={onDropFiles} {...restProps} />
+  )
 }
 
 export const Default = Template.bind({})
 Default.args = {
-  files: exampleFiles
+  data: exampleFiles
 }
 Default.argTypes = {
-  onMove: {},
-  onClick: {},
-  onDoubleClick: {},
-  onFilesDrop: {}
+  onDrop: { action: 'dropped row(s)' },
+  onDropFiles: { action: 'dropped file(s)' }
 }
 
 export default {

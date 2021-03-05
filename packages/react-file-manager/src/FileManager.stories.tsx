@@ -24,13 +24,11 @@ const Template: Story<FileManagerProps<FileManagerNode>> = props => (
 
 export const Default = Template.bind({})
 Default.args = {
-  files: exampleFiles
+  data: exampleFiles
 }
 Default.argTypes = {
-  onMove: { action: 'moved' },
-  onClick: { action: 'clicked' },
-  onDoubleClick: { action: 'double clicked' },
-  onFilesDrop: { action: 'dropped file(s)' }
+  onDrop: { action: 'dropped row(s)' },
+  onDropFiles: { action: 'dropped file(s)' }
 }
 
 export default {

@@ -1,6 +1,6 @@
 import React, { HTMLProps } from 'react'
 import { TableProps as RcTableProps } from 'rc-table/es/Table'
-import { ColumnsType } from 'rc-table/es/interface'
+import { ColumnsType, DefaultRecordType } from 'rc-table/es/interface'
 
 export interface FileManagerNode {
   path: string
@@ -18,39 +18,34 @@ export type TableProps<T> = Pick<
   | 'columns'
 >
 
-export interface RenameFunc<T> {
-  (node: T, newName: string): Promise<void>
+export interface FileManagerDragLayerRenderer {
+  (x: number, y: number, draggedItems: string[]): React.ReactElement
 }
 
-export interface RowActionProps {
-  onDelete: () => void
+export interface CustomDragLayerProps {
+  selectedPaths: string[]
+  renderer: FileManagerDragLayerRenderer
 }
 
-export interface FileManagerProps<T extends FileManagerNode> {
+export interface FileManagerProps<T extends FileManagerNode>
+  extends Omit<
+    DnDTableProps<T>,
+    'canDropFiles' | 'onFilesDrop' | 'onDrop' | 'canDropNode'
+  > {
   selectedPaths?: string[]
   additionalColumns?: ColumnsType<T>
-  files: T[]
-  /**
-   * @param files
-   * @param dataTransferItemList
-   * @param target undefined if drop on root
-   */
-  onFilesDrop?: (
+  onRenameStart?: (node: T) => void
+  onDrop?: (sources: T[], target: T) => void
+  onDropFiles?: (
     files: File[],
-    dataTransferItemList: DataTransferItemList,
+    dataTransfer: DataTransferItemList,
     target?: T
   ) => void
-  onMove?: (nodes: T[], target: T) => void
-  // onRename?: RenameFunc<T>
-  // onCreate?: (node: FileManagerNode, content?: Blob) => Promise<void>
-  // onCopy?: (node: T, target: T) => Promise<void>
-  onDelete?: (node: T) => void
+  onDelete?: (nodes: T[]) => void
   onClick?: (node: T) => void
   onDoubleClick?: (node: T) => void
   renderIcon?: (node: T) => React.ReactNode | undefined
-  renderTable?: (props: TableProps<T>) => React.ReactElement
-  renderActions?: (props: RowActionProps) => React.ReactElement
-  dragLayerRenderer?: FileManagerDragLayerRenderer
+  renderNodeTitle?: (props: { node: T }) => React.ReactElement
 }
 
 export interface FileDropItem {
@@ -60,21 +55,30 @@ export interface FileDropItem {
   files: File[]
 }
 
-export type DropItemOrFile<T> = T | FileDropItem
+export interface DnDTableProps<T = unknown> extends TableProps<T> {
+  canDropNode: (source: T, target: T) => boolean
+  onDrop: (source: T, target: T) => void
+  canDropFiles?: (dataTransfer: DataTransferItemList, target: T) => boolean
+  onFilesDrop?: (
+    files: File[],
+    dataTransfer: DataTransferItemList,
+    target: T
+  ) => void
+  tableElement?: React.ElementType<TableProps<T>>
+}
 
-export interface AdditionalRowRenderProps<T extends FileManagerNode>
+export const DnDTableRowType = '__DND_TABLE_ROW__'
+export interface DnDTableRowItem<T> {
+  node: T
+  type: typeof DnDTableRowType
+}
+export type DropItemOrFile<T> = DnDTableRowItem<T> | FileDropItem
+
+export interface DnDRowRenderProps<T extends DefaultRecordType>
   extends HTMLProps<HTMLTableRowElement> {
   node: T
+  canDropNode: (source: T) => boolean
   onNodeDrop: (source: T) => void
-  canDropNode: (source: DropItemOrFile<T>) => boolean
+  canDropFiles: (dataTransfer: DataTransferItemList) => boolean
   onFilesDrop: (files: File[], dataTransfer: DataTransferItemList) => void
-}
-
-export interface FileManagerDragLayerRenderer {
-  (x: number, y: number, draggedItems: string[]): React.ReactElement
-}
-
-export interface CustomDragLayerProps {
-  selectedPaths: string[]
-  renderer: FileManagerDragLayerRenderer
 }
