@@ -1,74 +1,14 @@
-import React, { PropsWithChildren, useMemo } from 'react'
-import { DndProvider, useDragLayer } from 'react-dnd'
+import React, { PropsWithChildren } from 'react'
+import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DnDTableProps, FileManagerNode, FileManagerProps } from './interfaces'
 import {
-  CustomDragLayerProps,
-  DnDTableProps,
-  DropItemOrFile,
-  FileManagerNode,
-  FileManagerProps
-} from './interfaces'
-import { defaultCustomDragLayerRenderer } from './defaults'
+  defaultCustomDragLayerRenderer,
+  generateDefaultColumns
+} from './defaults'
 import DnDTable from './DnDTable'
-import { isFileDrop } from './utils'
-import { ColumnsType } from 'rc-table/es/interface'
-
-const isMultiMove = (selectedPaths: string[], draggedItemPath: string) => {
-  return (
-    selectedPaths.length > 1 && selectedPaths.indexOf(draggedItemPath) !== -1
-  )
-}
-
-const generateDefaultColumns = <T extends FileManagerNode>(
-  renderNodeTitle?: FileManagerProps<T>['renderNodeTitle']
-): ColumnsType<T> => [
-  {
-    key: 'icon',
-    title: '',
-    width: 1
-  },
-  {
-    key: 'name',
-    title: 'Name',
-    render: (_, node) =>
-      renderNodeTitle ? renderNodeTitle({ node }) : node.path
-  }
-]
-
-const CustomDragLayer = (props: CustomDragLayerProps) => {
-  const { selectedPaths, renderer } = props
-  const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
-    item: monitor.getItem() as DropItemOrFile<FileManagerNode>,
-    itemType: monitor.getItemType(),
-    isDragging: monitor.isDragging(),
-    clientOffset: monitor.getClientOffset()
-  }))
-
-  const items = useMemo((): string[] => {
-    if (!item) {
-      return []
-    }
-    if (isFileDrop(item)) {
-      // on hover we only get basic information about number of files and
-      // the mime-type of the files
-      return new Array(item.items.length).fill('')
-    }
-    if (isMultiMove(selectedPaths, item.node.path)) {
-      return selectedPaths
-    }
-    return [item.node.path]
-  }, [item, selectedPaths])
-
-  if (!isDragging || !clientOffset) {
-    return null
-  }
-
-  // TODO: this will depend on which is the scrolling element and the overlay offset technique
-  const scrollingElement = document.scrollingElement
-  const x = clientOffset.x + (scrollingElement?.scrollLeft || 0)
-  const y = clientOffset.y + (scrollingElement?.scrollTop || 0)
-  return renderer(x, y, items)
-}
+import { isMultiMove } from './utils'
+import CustomDragLayer from './CustomDragLayer'
 
 const FileManager = <T extends FileManagerNode>(
   props: PropsWithChildren<FileManagerProps<T>>

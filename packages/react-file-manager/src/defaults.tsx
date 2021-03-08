@@ -1,6 +1,12 @@
-import { CustomDragLayerProps, TableProps } from './interfaces'
+import {
+  CustomDragLayerProps,
+  FileManagerNode,
+  FileManagerProps,
+  TableProps
+} from './interfaces'
 import Table from 'rc-table'
 import React from 'react'
+import { ColumnsType } from 'rc-table/es/interface'
 
 export const defaultTableRenderer = <T,>(
   tableProps: TableProps<T>
@@ -38,3 +44,18 @@ export const defaultCustomDragLayerRenderer: CustomDragLayerProps['renderer'] = 
     </div>
   )
 }
+export const generateDefaultColumns = <T extends FileManagerNode>(
+  renderNodeTitle?: FileManagerProps<T>['renderNodeTitle']
+): ColumnsType<T> => [
+  {
+    key: 'icon',
+    title: '',
+    width: 1
+  },
+  {
+    key: 'name',
+    title: 'Name',
+    render: (_, node) =>
+      renderNodeTitle ? renderNodeTitle({ node }) : node.path
+  }
+]
