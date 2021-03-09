@@ -18,13 +18,10 @@ export type TableProps<T> = Pick<
   | 'columns'
 >
 
-export interface FileManagerDragLayerRenderer {
-  (x: number, y: number, draggedItems: string[]): React.ReactElement
-}
-
-export interface CustomDragLayerProps {
-  selectedPaths: string[]
-  renderer: FileManagerDragLayerRenderer
+export interface FileManagerDragLayerProps<T> {
+  x: number
+  y: number
+  draggedItems: DropItemOrFile<T>[]
 }
 
 export interface FileManagerProps<T extends FileManagerNode>
@@ -46,6 +43,7 @@ export interface FileManagerProps<T extends FileManagerNode>
   onDoubleClick?: (node: T) => void
   renderIcon?: (node: T) => React.ReactNode | undefined
   renderNodeTitle?: (props: { node: T }) => React.ReactElement
+  dragLayer?: React.FC<FileManagerDragLayerProps<T>>
 }
 
 export interface FileDropItem {

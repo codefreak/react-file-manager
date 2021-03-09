@@ -1,25 +1,16 @@
-import AntdFileManager, { FileManagerProps } from './index'
+import { FileManagerProps } from './index'
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
 
 import 'antd/dist/antd.css'
 import { FileManagerNode } from '@codefreak/react-file-manager/dist/interfaces'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import AntdFileManager from './AntdFileManager'
 
-const exampleFiles: FileManagerNode[] = [
-  {
-    path: 'moin1.txt',
-    type: 'file'
-  },
-  {
-    path: 'moin2.txt',
-    type: 'file'
-  },
-  {
-    path: 'dir',
-    type: 'directory'
-  }
-]
+const loadKernelFiles = () =>
+  fetch(
+    'https://api.github.com/repos/torvalds/linux/git/trees/master'
+  ).then(response => response.json())
 
 const Template: Story<FileManagerProps<FileManagerNode>> = props => {
   const {
@@ -28,6 +19,17 @@ const Template: Story<FileManagerProps<FileManagerNode>> = props => {
     ...restProps
   } = props
   const [files, setFiles] = useState(initialFiles || [])
+
+  useEffect(() => {
+    loadKernelFiles().then(ghKernelFiles => {
+      const newFiles = ghKernelFiles.tree.map((ghFile: any) => ({
+        path: ghFile.path,
+        type: ghFile.type === 'tree' ? 'directory' : 'file'
+      }))
+      setFiles(newFiles)
+    })
+  }, [])
+
   const onDropFiles: typeof originalOnDropFiles = (
     newFiles,
     dataTransfer,
@@ -53,7 +55,7 @@ const Template: Story<FileManagerProps<FileManagerNode>> = props => {
 
 export const Default = Template.bind({})
 Default.args = {
-  data: exampleFiles
+  data: []
 }
 Default.argTypes = {
   onDrop: { action: 'dropped row(s)' },
@@ -61,5 +63,5 @@ Default.argTypes = {
 }
 
 export default {
-  title: 'AntDesignFileManager'
+  title: 'AntdFileManager'
 } as Meta

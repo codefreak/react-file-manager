@@ -1,5 +1,5 @@
 import {
-  CustomDragLayerProps,
+  FileManagerDragLayerProps,
   FileManagerNode,
   FileManagerProps,
   TableProps
@@ -19,11 +19,10 @@ export const defaultActionRenderer = (): React.ReactNode => {
   return 'ACTIONS'
 }
 
-export const defaultCustomDragLayerRenderer: CustomDragLayerProps['renderer'] = (
-  x,
-  y,
-  items
-) => {
+export const DefaultCustomDragLayer: React.FC<
+  FileManagerDragLayerProps<any>
+> = props => {
+  const { x, y, draggedItems } = props
   return (
     <div
       style={{
@@ -40,10 +39,11 @@ export const defaultCustomDragLayerRenderer: CustomDragLayerProps['renderer'] = 
         pointerEvents: 'none' // prevent drop event on overlay
       }}
     >
-      {items.join(', ')}
+      {draggedItems.length}
     </div>
   )
 }
+
 export const generateDefaultColumns = <T extends FileManagerNode>(
   renderNodeTitle?: FileManagerProps<T>['renderNodeTitle']
 ): ColumnsType<T> => [

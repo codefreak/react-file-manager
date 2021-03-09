@@ -2,10 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DnDTableProps, FileManagerNode, FileManagerProps } from './interfaces'
-import {
-  defaultCustomDragLayerRenderer,
-  generateDefaultColumns
-} from './defaults'
+import { generateDefaultColumns } from './defaults'
 import DnDTable from './DnDTable'
 import { isMultiMove } from './utils'
 import CustomDragLayer from './CustomDragLayer'
@@ -59,10 +56,7 @@ const FileManager = <T extends FileManagerNode>(
   const canDropFiles: DnDTableProps<T>['canDropFiles'] = () => true
   return (
     <DndProvider backend={HTML5Backend}>
-      <CustomDragLayer
-        selectedPaths={selectedPaths}
-        renderer={defaultCustomDragLayerRenderer}
-      />
+      <CustomDragLayer element={props.dragLayer} />
       <DnDTable
         {...tableProps}
         rowKey="path"
