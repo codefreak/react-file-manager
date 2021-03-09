@@ -1,6 +1,6 @@
 import { FileTextFilled, FolderFilled, MoreOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
-import { Button, Dropdown, Input, Menu, Table } from 'antd'
+import { Button, Dropdown, Input, Menu, Table as AntdTableComp } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import FileManager, {
   FileManagerNode,
@@ -16,11 +16,137 @@ const antdIconRenderer = <T extends FileManagerNode>(_: any, node: T) => {
   return <FileTextFilled style={{ fontSize: '1.5em' }} />
 }
 
+interface AntdTableNameColumnProps<T extends FileManagerNode> {
+  path: string
+  renaming: boolean
+  onRename: (newName: string) => void
+}
+
+const AntdTableNameColumn = <T extends FileManagerNode>(
+  props: AntdTableNameColumnProps<T>
+) => {
+  const { path } = props
+  const [isRenaming, setRenaming] = useState<boolean>(props.renaming)
+
+  if (isRenaming) {
+    return (
+      <Input
+        size="small"
+        defaultValue={path}
+        autoFocus
+        onFocus={e => {
+          e.target.select()
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Escape') {
+            setRenaming(false)
+          } else if (e.key == 'Enter') {
+            props.onRename(e.currentTarget.value)
+            setRenaming(false)
+          }
+        }}
+      />
+    )
+  }
+
+  return <span onDoubleClick={() => setRenaming(true)}>{path}</span>
+}
+
+interface AntdFileManagerTableProps<T extends FileManagerNode>
+  extends TableProps<T> {
+  onRename?: (node: T, newName: string) => void
+  onRowSelectionChange?: (selectedKeys: string[]) => void
+  additionalColumns?: ColumnsType<T>
+}
+
+/**
+ * Wrapper that bridges rc-table to antd's Table
+ * AntD's table brings some additional functionality like sorting columns
+ *
+ * @param props
+ * @constructor
+ */
+const AntdTable = <T extends FileManagerNode>(
+  props: AntdFileManagerTableProps<T>
+) => {
+  const { data, onRename, onRowSelectionChange, ...restProps } = props
+  const [renamingKey, setRenamingKey] = useState<string | undefined>(undefined)
+
+  const renderActions = (_: any, node: T) => {
+    const onRename = (): void => setRenamingKey(node.path)
+    const menu = (
+      <Menu>
+        <Menu.Item>Delete</Menu.Item>
+        <Menu.Item onClick={onRename}>Rename</Menu.Item>
+      </Menu>
+    )
+    return (
+      <Dropdown overlay={menu} trigger={['click']}>
+        <Button size="small" icon={<MoreOutlined />} />
+      </Dropdown>
+    )
+  }
+
+  const renderNameColumn = (_: any, node: T) => (
+    <AntdTableNameColumn
+      path={node.path}
+      renaming={renamingKey === node.path}
+      onRename={newName => {
+        onRename?.(node, newName)
+      }}
+    />
+  )
+
+  const columns: ColumnsType<T> = [
+    {
+      key: 'icon',
+      render: antdIconRenderer,
+      width: 1
+    },
+    {
+      key: 'name',
+      title: 'Name',
+      sorter: (a: T, b: T) =>
+        a.path.localeCompare(b.path, undefined, {
+          numeric: true,
+          sensitivity: 'base'
+        }),
+      defaultSortOrder: 'ascend',
+      render: renderNameColumn
+    },
+    ...(props.additionalColumns || []),
+    {
+      key: 'actions',
+      render: renderActions,
+      width: 1
+    }
+  ]
+
+  return (
+    <AntdTableComp
+      rowSelection={{
+        type: 'checkbox',
+        onChange: (_, items) => {
+          onRowSelectionChange?.(items.map(item => item.path))
+        }
+      }}
+      dataSource={data}
+      {...restProps}
+      columns={columns}
+      pagination={false}
+    />
+  )
+}
+
+export interface AntdFileManagerProps<T extends FileManagerNode>
+  extends FileManagerProps<T> {
+  onRename?: (node: T, newName: string) => void
+}
+
 const AntdFileManager = <T extends FileManagerNode>(
-  props: FileManagerProps<T>
+  props: AntdFileManagerProps<T>
 ): React.ReactElement => {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
-  const [renaming, setRenaming] = useState<string | undefined>(undefined)
 
   const onClick = (node: T) => {
     const index = selectedRows.indexOf(node.path)
@@ -35,87 +161,18 @@ const AntdFileManager = <T extends FileManagerNode>(
     }
   }
 
-  const AntdTable = (props: TableProps<T>) => {
-    const { data, ...restProps } = props
-
-    const renderActions = (_: any, node: T) => {
-      const onClickRename = () => setRenaming(node.path)
-      const menu = (
-        <Menu>
-          <Menu.Item>Delete</Menu.Item>
-          <Menu.Item onClick={onClickRename}>Rename</Menu.Item>
-        </Menu>
-      )
-      return (
-        <Dropdown overlay={menu} trigger={['click']}>
-          <Button size="small" icon={<MoreOutlined />} />
-        </Dropdown>
-      )
-    }
-
-    const renderTitle = (_: any, node: T) => {
-      if (node.path === renaming) {
-        return (
-          <Input
-            size="small"
-            defaultValue={node.path}
-            autoFocus
-            onFocus={e => {
-              e.target.select()
-            }}
-          />
-        )
-      }
-      return <span>{node.path}</span>
-    }
-
-    const columns: ColumnsType<T> = [
-      {
-        key: 'icon',
-        render: antdIconRenderer,
-        width: 1
-      },
-      {
-        key: 'name',
-        title: 'Name',
-        sorter: (a: T, b: T) =>
-          a.path.localeCompare(b.path, undefined, {
-            numeric: true,
-            sensitivity: 'base'
-          }),
-        defaultSortOrder: 'ascend',
-        render: renderTitle
-      },
-      {
-        key: 'actions',
-        render: renderActions,
-        width: 1
-      }
-    ]
-
-    return (
-      <Table
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: selectedRows,
-          onChange: selectedRowKeys => {
-            setSelectedRows(selectedRowKeys.map(t => t.toString()))
-          }
-        }}
-        dataSource={data}
-        {...restProps}
-        columns={columns}
-        pagination={false}
-      />
-    )
-  }
-
   return (
     <FileManager
       {...props}
       dragLayer={AntdDragLayer}
       selectedPaths={selectedRows}
-      tableElement={AntdTable}
+      renderTable={tableProps => (
+        <AntdTable
+          {...tableProps}
+          onRowSelectionChange={setSelectedRows}
+          onRename={props.onRename}
+        />
+      )}
       onClick={onClick}
     />
   )

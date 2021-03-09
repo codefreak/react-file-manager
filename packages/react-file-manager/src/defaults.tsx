@@ -10,7 +10,7 @@ import { ColumnsType } from 'rc-table/es/interface'
 
 export const defaultTableRenderer = <T,>(
   tableProps: TableProps<T>
-): React.ReactNode => {
+): React.ReactElement => {
   return <Table {...tableProps} />
 }
 export const defaultIconRenderer = (): React.ReactNode => '📄'

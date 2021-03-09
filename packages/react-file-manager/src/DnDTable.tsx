@@ -12,6 +12,7 @@ import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
 import Table from 'rc-table'
 import { DefaultRecordType } from 'rc-table/es/interface'
 import { isFileDrop } from './utils'
+import { defaultTableRenderer } from './defaults'
 
 const DnDTableRow = <T extends DefaultRecordType>(
   props: PropsWithChildren<DnDRowRenderProps<T>>
@@ -56,7 +57,9 @@ const DnDTableRow = <T extends DefaultRecordType>(
   return <tr ref={ref} {...restProps} />
 }
 
-const DnDTable = <T extends DefaultRecordType>(props: DnDTableProps<T>) => {
+const DnDTable = <T extends DefaultRecordType>(
+  props: DnDTableProps<T>
+): React.ReactElement => {
   const getAdditionalRowProps = (node: T): DnDRowRenderProps<T> => {
     return {
       node,
@@ -73,7 +76,8 @@ const DnDTable = <T extends DefaultRecordType>(props: DnDTableProps<T>) => {
     }
   }
 
-  const tableProps: TableProps<T> = {
+  const renderTable = props.renderTable || defaultTableRenderer
+  return renderTable({
     ...props,
     components: {
       body: {
@@ -81,11 +85,7 @@ const DnDTable = <T extends DefaultRecordType>(props: DnDTableProps<T>) => {
       }
     },
     onRow: getAdditionalRowProps
-  }
-
-  const TableElement: React.ElementType<TableProps<T>> =
-    props.tableElement || Table
-  return <TableElement {...tableProps} />
+  })
 }
 
 export default DnDTable

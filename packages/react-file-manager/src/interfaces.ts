@@ -62,7 +62,7 @@ export interface DnDTableProps<T = unknown> extends TableProps<T> {
     dataTransfer: DataTransferItemList,
     target: T
   ) => void
-  tableElement?: React.ElementType<TableProps<T>>
+  renderTable?: (props: TableProps<T>) => React.ReactElement
 }
 
 export const DnDTableRowType = '__DND_TABLE_ROW__'
