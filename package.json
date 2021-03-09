@@ -31,7 +31,8 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "dev": "lerna run --parallel dev",
+    "workspace-dev": "lerna run --parallel dev",
+    "dev": "run-p storybook workspace-dev",
     "lint:prettier": "prettier --check \"packages/*/src/**/*\"",
     "fix:prettier": "prettier --write \"packages/*/src/**/*\"",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
