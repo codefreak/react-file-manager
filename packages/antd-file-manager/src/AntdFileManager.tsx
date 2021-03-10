@@ -1,6 +1,6 @@
 import { FileTextFilled, FolderFilled, MoreOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
-import { Button, Dropdown, Input, Menu, Table as AntdTableComp } from 'antd'
+import { Button, Dropdown, Menu, Table as AntdTableComp } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import FileManager, {
   FileManagerNode,
@@ -8,48 +8,13 @@ import FileManager, {
   TableProps
 } from '@codefreak/react-file-manager'
 import AntdDragLayer from './AntdDragLayer'
+import EditableValue from './EditableValue'
 
 const antdIconRenderer = <T extends FileManagerNode>(_: any, node: T) => {
   if (node.type === 'directory') {
     return <FolderFilled style={{ fontSize: '1.5em' }} />
   }
   return <FileTextFilled style={{ fontSize: '1.5em' }} />
-}
-
-interface AntdTableNameColumnProps<T extends FileManagerNode> {
-  path: string
-  renaming: boolean
-  onRename: (newName: string) => void
-}
-
-const AntdTableNameColumn = <T extends FileManagerNode>(
-  props: AntdTableNameColumnProps<T>
-) => {
-  const { path } = props
-  const [isRenaming, setRenaming] = useState<boolean>(props.renaming)
-
-  if (isRenaming) {
-    return (
-      <Input
-        size="small"
-        defaultValue={path}
-        autoFocus
-        onFocus={e => {
-          e.target.select()
-        }}
-        onKeyDown={e => {
-          if (e.key === 'Escape') {
-            setRenaming(false)
-          } else if (e.key == 'Enter') {
-            props.onRename(e.currentTarget.value)
-            setRenaming(false)
-          }
-        }}
-      />
-    )
-  }
-
-  return <span onDoubleClick={() => setRenaming(true)}>{path}</span>
 }
 
 interface AntdFileManagerTableProps<T extends FileManagerNode>
@@ -88,10 +53,12 @@ const AntdTable = <T extends FileManagerNode>(
   }
 
   const renderNameColumn = (_: any, node: T) => (
-    <AntdTableNameColumn
-      path={node.path}
-      renaming={renamingKey === node.path}
-      onRename={newName => {
+    <EditableValue
+      defaultValue={node.path}
+      onEditCancel={() => setRenamingKey(undefined)}
+      onEditStart={() => setRenamingKey(node.path)}
+      editing={renamingKey === node.path}
+      onChange={newName => {
         onRename?.(node, newName)
       }}
     />
