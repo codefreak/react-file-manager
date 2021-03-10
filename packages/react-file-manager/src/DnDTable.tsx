@@ -3,13 +3,11 @@ import {
   DnDTableProps,
   DnDTableRowItem,
   DnDTableRowType,
-  DropItemOrFile,
-  TableProps
+  DropItemOrFile
 } from './interfaces'
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
-import Table from 'rc-table'
 import { DefaultRecordType } from 'rc-table/es/interface'
 import { isFileDrop } from './utils'
 import { defaultTableRenderer } from './defaults'
