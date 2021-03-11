@@ -32,7 +32,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build": "lerna run --parallel build",
+    "build": "lerna run build",
     "tsc-watch": "lerna run --parallel tsc-watch",
     "start": "run-p tsc-watch storybook",
     "lint:prettier": "prettier --check \"packages/*/src/**/*\"",
