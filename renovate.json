@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "stabilityDays": 7,
+  "timezone": "Europe/Berlin",
+  "schedule": [
+    "before 6am"
+  ],
+  "prCreation": "not-pending",
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch", "pin"],
+      "automerge": true
+    }
+  ]
+}
