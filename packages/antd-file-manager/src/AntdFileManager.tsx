@@ -1,6 +1,15 @@
-import { FileTextFilled, FolderFilled, MoreOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FileTextFilled,
+  FolderFilled
+} from '@ant-design/icons'
 import React, { useState } from 'react'
-import { Button, Dropdown, Menu, Table as AntdTableComp } from 'antd'
+import {
+  Button,
+  Modal,
+  Table as AntdTableComp
+} from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import FileManager, {
   FileManagerNode,
@@ -20,6 +29,7 @@ const antdIconRenderer = <T extends FileManagerNode>(_: any, node: T) => {
 interface AntdFileManagerTableProps<T extends FileManagerNode>
   extends TableProps<T> {
   onRename?: (node: T, newName: string) => void
+  onDelete?: (nodes: T[]) => void
   onRowSelectionChange?: (selectedKeys: string[]) => void
   additionalColumns?: ColumnsType<T>
 }
@@ -35,29 +45,29 @@ const AntdTable = <T extends FileManagerNode>(
   props: AntdFileManagerTableProps<T>
 ) => {
   const { data, onRename, onRowSelectionChange, ...restProps } = props
-  const [renamingKey, setRenamingKey] = useState<string | undefined>(undefined)
+  const [renamingNode, setRenamingNode] = useState<T | undefined>()
+  const [deletingNode, setDeletingNode] = useState<T | undefined>()
 
   const renderActions = (_: any, node: T) => {
-    const onRename = (): void => setRenamingKey(node.path)
-    const menu = (
-      <Menu>
-        <Menu.Item>Delete</Menu.Item>
-        <Menu.Item onClick={onRename}>Rename</Menu.Item>
-      </Menu>
-    )
+    const onRename = (): void => setRenamingNode(node)
+    const onDelete = (): void => setDeletingNode(node)
     return (
-      <Dropdown overlay={menu} trigger={['click']}>
-        <Button size="small" icon={<MoreOutlined />} />
-      </Dropdown>
+      <Button.Group>
+        <Button
+          onClick={onDelete}
+          icon={<DeleteOutlined style={{ color: 'red' }} />}
+        />
+        <Button onClick={onRename} icon={<EditOutlined />} />
+      </Button.Group>
     )
   }
 
   const renderNameColumn = (_: any, node: T) => (
     <EditableValue
       defaultValue={node.path}
-      onEditCancel={() => setRenamingKey(undefined)}
-      onEditStart={() => setRenamingKey(node.path)}
-      editing={renamingKey === node.path}
+      onEditCancel={() => setRenamingNode(undefined)}
+      onEditStart={() => setRenamingNode(node)}
+      editing={renamingNode === node}
       onChange={newName => {
         onRename?.(node, newName)
       }}
@@ -89,19 +99,35 @@ const AntdTable = <T extends FileManagerNode>(
     }
   ]
 
+  const onDelete = () => {
+    if (deletingNode !== undefined) {
+      props.onDelete?.([deletingNode])
+      setDeletingNode(undefined)
+    }
+  }
+
   return (
-    <AntdTableComp
-      rowSelection={{
-        type: 'checkbox',
-        onChange: (_, items) => {
-          onRowSelectionChange?.(items.map(item => item.path))
-        }
-      }}
-      dataSource={data}
-      {...restProps}
-      columns={columns}
-      pagination={false}
-    />
+    <>
+      <AntdTableComp
+        rowSelection={{
+          type: 'checkbox',
+          onChange: (_, items) => {
+            onRowSelectionChange?.(items.map(item => item.path))
+          }
+        }}
+        dataSource={data}
+        {...restProps}
+        columns={columns}
+        pagination={false}
+      />
+      <Modal
+        visible={deletingNode !== undefined}
+        onOk={onDelete}
+        onCancel={() => setDeletingNode(undefined)}
+        title={`Really delete ${deletingNode?.path}?`}
+        okButtonProps={{ danger: true }}
+      />
+    </>
   )
 }
 
