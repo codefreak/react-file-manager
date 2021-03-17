@@ -14,8 +14,8 @@
     "@ant-design/icons": "^4.5.0"
   },
   "devDependencies": {
-    "antd": "^4.12.3",
-    "@ant-design/icons": "^4.5.0"
+    "antd": "4.12.3",
+    "@ant-design/icons": "4.5.0"
   },
   "scripts": {
     "build": "tsc",
