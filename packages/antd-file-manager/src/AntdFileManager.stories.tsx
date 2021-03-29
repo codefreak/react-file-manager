@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react'
 import 'antd/dist/antd.css'
 import { FileManagerNode } from '@codefreak/react-file-manager/dist/interfaces'
 import { useCallback, useEffect, useState } from 'react'
-import AntdFileManager, { AntdFileManagerProps } from './AntdFileManager'
+import AntdFileManager, { AntdFileManagerProps } from './index'
 
 interface DummyNode extends FileManagerNode {
   size?: number
