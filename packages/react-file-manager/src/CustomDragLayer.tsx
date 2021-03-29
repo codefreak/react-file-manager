@@ -18,7 +18,7 @@ export interface CustomDragLayerProps<T extends FileManagerNode> {
  */
 const CustomDragLayer = <T extends FileManagerNode>(
   props: CustomDragLayerProps<T>
-): React.ReactNode => {
+): React.ReactElement | null => {
   const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
     item: monitor.getItem() as DropItemOrFile<T>,
     itemType: monitor.getItemType(),
