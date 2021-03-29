@@ -43,5 +43,6 @@
     "fix": "npm-run-all fix:*",
     "lint": "npm-run-all lint:*",
     "chromatic": "chromatic --exit-zero-on-changes"
-  }
+  },
+  "version": "0.1.0"
 }
