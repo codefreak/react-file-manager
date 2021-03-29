@@ -1,6 +1,6 @@
 {
   "name": "@codefreak/antd-file-manager",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Ant Design File Manager Component for React",
   "main": "dist/index",
   "types": "dist/index",
