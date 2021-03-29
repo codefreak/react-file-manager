@@ -53,6 +53,11 @@ const FileManager = <T extends FileManagerNode>(
     }
   }
 
+  const getAdditionalRowProps = (node: T) => ({
+    onClick: () => props.onClickRow?.(node),
+    onDoubleClick: () => props.onDoubleClickRow?.(node)
+  })
+
   const {
     columns = generateDefaultColumns<T>(props.renderNodeTitle),
     ...tableProps
@@ -69,6 +74,7 @@ const FileManager = <T extends FileManagerNode>(
         onDrop={onNodeDrop}
         canDropFiles={canDropFiles}
         onFilesDrop={onFilesDrop}
+        onRow={getAdditionalRowProps}
       />
     </DndProvider>
   )

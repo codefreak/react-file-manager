@@ -58,8 +58,11 @@ const DnDTableRow = <T extends DefaultRecordType>(
 const DnDTable = <T extends DefaultRecordType>(
   props: DnDTableProps<T>
 ): React.ReactElement => {
-  const getAdditionalRowProps = (node: T): DnDRowRenderProps<T> => {
-    return {
+  const getAdditionalRowProps = (
+    node: T,
+    index?: number
+  ): DnDRowRenderProps<T> => {
+    let rowProps: DnDRowRenderProps<T> = {
       node,
       canDropNode: source => props.canDropNode(source, node),
       onNodeDrop: source => props.onDrop(source, node),
@@ -72,6 +75,15 @@ const DnDTable = <T extends DefaultRecordType>(
         props.onFilesDrop(files, dataTransfer, node)
       }
     }
+
+    if (props.onRow) {
+      rowProps = {
+        ...rowProps,
+        ...props.onRow(node, index)
+      }
+    }
+
+    return rowProps
   }
 
   const renderTable = props.renderTable || defaultTableRenderer

@@ -116,10 +116,12 @@ Default.args = {
   ]
 }
 Default.argTypes = {
-  onDrop: { action: 'dropped row(s)' },
-  onDropFiles: { action: 'dropped file(s)' },
-  onRename: { action: 'renamed node' },
-  onDelete: { action: 'delete node(s)' }
+  onDrop: { action: 'onDrop' },
+  onDropFiles: { action: 'onDropFiles' },
+  onRename: { action: 'onRename' },
+  onDelete: { action: 'onDelete' },
+  onClickRow: { action: 'onClickRow' },
+  onDoubleClickRow: { action: 'onDoubleClickRow' }
 }
 
 export default {

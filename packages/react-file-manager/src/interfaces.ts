@@ -39,8 +39,8 @@ export interface FileManagerProps<T extends FileManagerNode>
     target?: T
   ) => void
   onDelete?: (nodes: T[]) => void
-  onClick?: (node: T) => void
-  onDoubleClick?: (node: T) => void
+  onClickRow?: (node: T) => void
+  onDoubleClickRow?: (node: T) => void
   renderIcon?: (node: T) => React.ReactNode | undefined
   renderNodeTitle?: (props: { node: T }) => React.ReactElement
   dragLayer?: React.FC<FileManagerDragLayerProps<T>>

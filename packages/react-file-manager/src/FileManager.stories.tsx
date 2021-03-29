@@ -27,8 +27,12 @@ Default.args = {
   data: exampleFiles
 }
 Default.argTypes = {
-  onDrop: { action: 'dropped row(s)' },
-  onDropFiles: { action: 'dropped file(s)' }
+  onDrop: { action: 'onDrop' },
+  onDropFiles: { action: 'onDropFiles' },
+  onRename: { action: 'onRename' },
+  onDelete: { action: 'onDelete' },
+  onClickRow: { action: 'onClickRow' },
+  onDoubleClickRow: { action: 'onDoubleClickRow' }
 }
 
 export default {
