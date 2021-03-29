@@ -11,7 +11,8 @@ import FileManager, {
   MultiSelectionProvider,
   FileManagerNode,
   FileManagerProps,
-  TableProps
+  TableProps,
+  basename
 } from '@codefreak/react-file-manager'
 import AntdDragLayer from './AntdDragLayer'
 import EditableValue from './EditableValue'
@@ -62,7 +63,7 @@ const AntdTable = <T extends FileManagerNode>(
 
   const renderNameColumn = (_: unknown, node: T) => (
     <EditableValue
-      defaultValue={node.path}
+      defaultValue={basename(node.path)}
       onEditCancel={() => setRenamingNode(undefined)}
       onEditStart={() => setRenamingNode(node)}
       editing={renamingNode === node}

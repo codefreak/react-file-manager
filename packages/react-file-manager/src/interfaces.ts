@@ -42,7 +42,10 @@ export interface FileManagerProps<T extends FileManagerNode>
   onClickRow?: (node: T) => void
   onDoubleClickRow?: (node: T) => void
   renderIcon?: (node: T) => React.ReactNode | undefined
-  renderNodeTitle?: (props: { node: T }) => React.ReactElement
+  renderNodeTitle?: (
+    props: { node: T },
+    defaultTitle: string
+  ) => React.ReactElement
   dragLayer?: React.FC<FileManagerDragLayerProps<T>>
 }
 

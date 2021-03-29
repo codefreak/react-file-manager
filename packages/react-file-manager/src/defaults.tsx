@@ -19,6 +19,10 @@ export const defaultActionRenderer = (): React.ReactNode => {
   return 'ACTIONS'
 }
 
+export const basename = (path: string) => {
+  return path.replace(/^.*?\/?([^\/]+)$/, '$1')
+}
+
 export const DefaultCustomDragLayer = <T extends FileManagerNode>(
   props: FileManagerDragLayerProps<T>
 ): React.ReactElement => {
@@ -55,7 +59,9 @@ export const generateDefaultColumns = <T extends FileManagerNode>(
   {
     key: 'name',
     title: 'Name',
-    render: (_, node) =>
-      renderNodeTitle ? renderNodeTitle({ node }) : node.path
+    render: (_, node) => {
+      const defaultTitle = basename(node.path)
+      return renderNodeTitle?.({ node }, defaultTitle) || defaultTitle
+    }
   }
 ]
