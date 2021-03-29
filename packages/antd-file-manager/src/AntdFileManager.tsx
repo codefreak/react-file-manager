@@ -28,6 +28,7 @@ interface AntdFileManagerTableProps<T extends FileManagerNode>
   onRename?: (node: T, newName: string) => void
   onDelete?: (nodes: T[]) => void
   onRowSelectionChange?: (selectedKeys: string[]) => void
+  selectedRows?: string[]
   additionalColumns?: ColumnsType<T>
 }
 
@@ -108,6 +109,7 @@ const AntdTable = <T extends FileManagerNode>(
       <AntdTableComp
         rowSelection={{
           type: 'checkbox',
+          selectedRowKeys: props.selectedRows,
           onChange: (_, items) => {
             onRowSelectionChange?.(items.map(item => item.path))
           }
@@ -163,6 +165,7 @@ const AntdFileManager = <T extends FileManagerNode>(
         renderTable={tableProps => (
           <AntdTable
             {...tableProps}
+            selectedRows={selectedRows}
             onRowSelectionChange={setSelectedRows}
             onRename={props.onRename}
           />
