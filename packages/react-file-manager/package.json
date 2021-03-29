@@ -17,5 +17,9 @@
   "scripts": {
     "build": "tsc",
     "tsc-watch": "tsc -w --preserveWatchOutput"
+  },
+  "gitHead": "9f56f4ec43bc43a1bf320a3090c3c1dbad5adf82",
+  "publishConfig": {
+    "access": "public"
   }
 }
