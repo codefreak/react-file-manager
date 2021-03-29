@@ -1,9 +1,14 @@
 import { FileTextFilled } from '@ant-design/icons'
 import { Badge } from 'antd'
 import React from 'react'
-import { FileManagerDragLayerProps } from '@codefreak/react-file-manager'
+import {
+  FileManagerDragLayerProps,
+  FileManagerNode
+} from '@codefreak/react-file-manager'
 
-const AntdDragLayer: React.FC<FileManagerDragLayerProps<any>> = props => {
+const AntdDragLayer = <T extends FileManagerNode>(
+  props: FileManagerDragLayerProps<T>
+): React.ReactElement => {
   const { x, y, draggedItems } = props
   let dragContent = <FileTextFilled style={{ fontSize: '1.5em' }} />
   // wrap in badge if multiple items are dragged

@@ -4,14 +4,11 @@ import {
   FileTextFilled,
   FolderFilled
 } from '@ant-design/icons'
-import React, { useState } from 'react'
-import {
-  Button,
-  Modal,
-  Table as AntdTableComp
-} from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Button, Modal, Table as AntdTableComp } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import FileManager, {
+  MultiSelectionProvider,
   FileManagerNode,
   FileManagerProps,
   TableProps
@@ -19,7 +16,7 @@ import FileManager, {
 import AntdDragLayer from './AntdDragLayer'
 import EditableValue from './EditableValue'
 
-const antdIconRenderer = <T extends FileManagerNode>(_: any, node: T) => {
+const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
   if (node.type === 'directory') {
     return <FolderFilled style={{ fontSize: '1.5em' }} />
   }
@@ -48,7 +45,7 @@ const AntdTable = <T extends FileManagerNode>(
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
   const [deletingNode, setDeletingNode] = useState<T | undefined>()
 
-  const renderActions = (_: any, node: T) => {
+  const renderActions = (_: unknown, node: T) => {
     const onRename = (): void => setRenamingNode(node)
     const onDelete = (): void => setDeletingNode(node)
     return (
@@ -62,7 +59,7 @@ const AntdTable = <T extends FileManagerNode>(
     )
   }
 
-  const renderNameColumn = (_: any, node: T) => (
+  const renderNameColumn = (_: unknown, node: T) => (
     <EditableValue
       defaultValue={node.path}
       onEditCancel={() => setRenamingNode(undefined)}
@@ -139,7 +136,11 @@ export interface AntdFileManagerProps<T extends FileManagerNode>
 const AntdFileManager = <T extends FileManagerNode>(
   props: AntdFileManagerProps<T>
 ): React.ReactElement => {
+  const { data } = props
   const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const selectedItems = useMemo(() => {
+    return data?.filter(node => selectedRows.indexOf(node.path) !== -1) || []
+  }, [data, selectedRows])
 
   const onClick = (node: T) => {
     const index = selectedRows.indexOf(node.path)
@@ -155,19 +156,20 @@ const AntdFileManager = <T extends FileManagerNode>(
   }
 
   return (
-    <FileManager
-      {...props}
-      dragLayer={AntdDragLayer}
-      selectedPaths={selectedRows}
-      renderTable={tableProps => (
-        <AntdTable
-          {...tableProps}
-          onRowSelectionChange={setSelectedRows}
-          onRename={props.onRename}
-        />
-      )}
-      onClick={onClick}
-    />
+    <MultiSelectionProvider value={selectedItems}>
+      <FileManager
+        {...props}
+        dragLayer={AntdDragLayer}
+        renderTable={tableProps => (
+          <AntdTable
+            {...tableProps}
+            onRowSelectionChange={setSelectedRows}
+            onRename={props.onRename}
+          />
+        )}
+        onClick={onClick}
+      />
+    </MultiSelectionProvider>
   )
 }
 

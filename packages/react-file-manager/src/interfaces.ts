@@ -21,7 +21,7 @@ export type TableProps<T> = Pick<
 export interface FileManagerDragLayerProps<T> {
   x: number
   y: number
-  draggedItems: DropItemOrFile<T>[]
+  draggedItems: T[]
 }
 
 export interface FileManagerProps<T extends FileManagerNode>
@@ -47,7 +47,6 @@ export interface FileManagerProps<T extends FileManagerNode>
 }
 
 export interface FileDropItem {
-  // TODO: this "type" doesn't really exist
   type: '__NATIVE_FILE__'
   items: DataTransferItemList
   files: File[]

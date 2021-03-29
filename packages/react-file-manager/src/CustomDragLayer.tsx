@@ -6,22 +6,31 @@ import {
 import { useDragLayer } from 'react-dnd'
 import React from 'react'
 import { DefaultCustomDragLayer } from './defaults'
+import { useSelectedItems } from './MultiSelectionProvider'
+import { isFileDrop } from './utils'
 
 export interface CustomDragLayerProps<T extends FileManagerNode> {
   element?: React.FC<FileManagerDragLayerProps<T>>
 }
 
+/**
+ * HOC that detects file dropping and multi-selection
+ */
 const CustomDragLayer = <T extends FileManagerNode>(
   props: CustomDragLayerProps<T>
-) => {
+): React.ReactNode => {
   const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
     item: monitor.getItem() as DropItemOrFile<T>,
     itemType: monitor.getItemType(),
     isDragging: monitor.isDragging(),
     clientOffset: monitor.getClientOffset()
   }))
+  // TODO: this casting is unsafe. Can we make the context type-safe?
+  const selectedItems = useSelectedItems() as T[]
 
-  if (!isDragging || !clientOffset) {
+  // Browsers render a default file icon with (+) when dragging a file
+  // over a droppable area. I think this cannot be removed...?
+  if (!isDragging || !clientOffset || isFileDrop(item)) {
     return null
   }
 
@@ -30,7 +39,9 @@ const CustomDragLayer = <T extends FileManagerNode>(
   const x = clientOffset.x + (scrollingElement?.scrollLeft || 0)
   const y = clientOffset.y + (scrollingElement?.scrollTop || 0)
   const LayerType = props.element || DefaultCustomDragLayer
-  return <LayerType x={x} y={y} draggedItems={[item]} />
+
+  const draggedItems: T[] = selectedItems.length ? selectedItems : [item.node]
+  return <LayerType x={x} y={y} draggedItems={draggedItems} />
 }
 
 export default CustomDragLayer

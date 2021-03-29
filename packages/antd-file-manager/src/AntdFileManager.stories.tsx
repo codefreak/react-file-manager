@@ -10,11 +10,18 @@ interface DummyNode extends FileManagerNode {
   mode: string
 }
 
+interface GitHubTreeElement {
+  path: string
+  type: 'tree'
+  size: number
+  mode: string
+}
+
 const loadKernelFiles = (): Promise<DummyNode[]> =>
   fetch('https://api.github.com/repos/torvalds/linux/git/trees/master')
     .then(response => response.json())
     .then(ghKernelFiles =>
-      ghKernelFiles.tree.map((ghFile: any) => ({
+      ghKernelFiles.tree.map((ghFile: GitHubTreeElement) => ({
         path: ghFile.path,
         type: ghFile.type === 'tree' ? 'directory' : 'file',
         size: ghFile.size || undefined,

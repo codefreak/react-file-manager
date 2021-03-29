@@ -19,9 +19,9 @@ export const defaultActionRenderer = (): React.ReactNode => {
   return 'ACTIONS'
 }
 
-export const DefaultCustomDragLayer: React.FC<
-  FileManagerDragLayerProps<any>
-> = props => {
+export const DefaultCustomDragLayer = <T extends FileManagerNode>(
+  props: FileManagerDragLayerProps<T>
+): React.ReactElement => {
   const { x, y, draggedItems } = props
   return (
     <div
@@ -39,7 +39,7 @@ export const DefaultCustomDragLayer: React.FC<
         pointerEvents: 'none' // prevent drop event on overlay
       }}
     >
-      {draggedItems.length}
+      {draggedItems.map(item => item.path).join(', ')}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useMemo } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DnDTableProps, FileManagerNode, FileManagerProps } from './interfaces'
@@ -6,12 +6,16 @@ import { generateDefaultColumns } from './defaults'
 import DnDTable from './DnDTable'
 import { isMultiMove } from './utils'
 import CustomDragLayer from './CustomDragLayer'
+import { useSelectedItems } from './MultiSelectionProvider'
 
 const FileManager = <T extends FileManagerNode>(
   props: PropsWithChildren<FileManagerProps<T>>
 ): React.ReactElement => {
   const files = props.data || []
-  const selectedPaths = props.selectedPaths || []
+  const selectedItems = useSelectedItems() as T[]
+  const selectedPaths = useMemo(() => selectedItems.map(item => item.path), [
+    selectedItems
+  ])
 
   const canDropNode: DnDTableProps<T>['canDropNode'] = (source, target) => {
     // only ever allow moves/drops to directories and never on dir itself
