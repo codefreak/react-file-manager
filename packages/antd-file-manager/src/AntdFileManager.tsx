@@ -152,8 +152,8 @@ const AntdFileManager = <T extends FileManagerNode>(
       const newSelectedRows = selectedRows.filter(p => p !== node.path)
       setSelectedRows(newSelectedRows)
     }
-    if (props.onClick) {
-      props.onClick(node)
+    if (props.onClickRow) {
+      props.onClickRow(node)
     }
   }
 
@@ -170,7 +170,7 @@ const AntdFileManager = <T extends FileManagerNode>(
             onRename={props.onRename}
           />
         )}
-        onClick={onClick}
+        onClickRow={onClick}
       />
     </MultiSelectionProvider>
   )
