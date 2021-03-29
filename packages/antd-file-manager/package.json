@@ -10,12 +10,12 @@
     "@codefreak/react-file-manager": "^1.0.0"
   },
   "peerDependencies": {
-    "antd": "^4.12.3",
-    "@ant-design/icons": "^4.5.0"
+    "@ant-design/icons": "^4.5.0",
+    "antd": "^4.12.3"
   },
   "devDependencies": {
-    "antd": "^4.12.3",
-    "@ant-design/icons": "^4.5.0"
+    "@ant-design/icons": "^4.5.0",
+    "antd": "^4.12.3"
   },
   "scripts": {
     "build": "tsc",
