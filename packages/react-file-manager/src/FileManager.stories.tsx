@@ -32,7 +32,10 @@ Default.argTypes = {
   onRename: { action: 'onRename' },
   onDelete: { action: 'onDelete' },
   onClickRow: { action: 'onClickRow' },
-  onDoubleClickRow: { action: 'onDoubleClickRow' }
+  onDoubleClickRow: { action: 'onDoubleClickRow' },
+  onRowDragStart: { action: 'onRowDragStart' },
+  onRowDragOver: { action: 'onRowDragOver' },
+  onRowDragEnd: { action: 'onRowDragEnd' }
 }
 
 export default {

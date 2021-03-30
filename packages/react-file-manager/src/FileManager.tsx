@@ -11,7 +11,7 @@ import { useSelectedItems } from './MultiSelectionProvider'
 const FileManager = <T extends FileManagerNode>(
   props: PropsWithChildren<FileManagerProps<T>>
 ): React.ReactElement => {
-  const files = props.data || []
+  const data = props.data || []
   const selectedItems = useSelectedItems() as T[]
   const selectedPaths = useMemo(() => selectedItems.map(item => item.path), [
     selectedItems
@@ -30,7 +30,7 @@ const FileManager = <T extends FileManagerNode>(
   const onNodeDrop: DnDTableProps<T>['onDrop'] = (source, target) => {
     if (props.onDrop) {
       if (isMultiMove(selectedPaths, source.path)) {
-        const sources = files.filter(i => selectedPaths.indexOf(i.path) !== -1)
+        const sources = data.filter(i => selectedPaths.indexOf(i.path) !== -1)
         props.onDrop(sources, target)
       } else {
         props.onDrop([source], target)

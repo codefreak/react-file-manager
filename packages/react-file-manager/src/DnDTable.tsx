@@ -21,6 +21,9 @@ const DnDTableRow = <T extends DefaultRecordType>(
     onNodeDrop,
     canDropFiles,
     onFilesDrop,
+    onRowDragStart,
+    onRowDragOver,
+    onRowDragEnd,
     ...restProps
   } = props
   const ref = useRef<HTMLTableRowElement>(null)
@@ -39,13 +42,17 @@ const DnDTableRow = <T extends DefaultRecordType>(
       } else {
         return canDropNode(item.node)
       }
-    }
+    },
+    hover: (draggedItem, monitor) =>
+      onRowDragOver(draggedItem, monitor.canDrop())
   })
   const [, drag, preview] = useDrag<DnDTableRowItem<T>, unknown, unknown>({
     item: {
       type: DnDTableRowType,
       node
-    }
+    },
+    begin: () => onRowDragStart(),
+    end: () => onRowDragEnd()
   })
   drag(drop(ref))
   useEffect(() => {
@@ -73,6 +80,15 @@ const DnDTable = <T extends DefaultRecordType>(
       onFilesDrop: (files, dataTransfer) => {
         if (!props.onFilesDrop) return
         props.onFilesDrop(files, dataTransfer, node)
+      },
+      onRowDragStart: () => {
+        props.onRowDragStart?.(node)
+      },
+      onRowDragOver: (draggedItem, canDrop) => {
+        props.onRowDragOver?.(draggedItem, node, canDrop)
+      },
+      onRowDragEnd: () => {
+        props.onRowDragEnd?.(node)
       }
     }
 

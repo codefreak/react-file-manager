@@ -47,6 +47,9 @@ export interface FileManagerProps<T extends FileManagerNode>
     defaultTitle: string
   ) => React.ReactElement
   dragLayer?: React.FC<FileManagerDragLayerProps<T>>
+  onRowDragStart?: DnDTableProps<T>['onRowDragStart']
+  onRowDragOver?: DnDTableProps<T>['onRowDragOver']
+  onRowDragEnd?: DnDTableProps<T>['onRowDragEnd']
 }
 
 export interface FileDropItem {
@@ -65,6 +68,13 @@ export interface DnDTableProps<T = unknown> extends TableProps<T> {
     target: T
   ) => void
   renderTable?: (props: TableProps<T>) => React.ReactElement
+  onRowDragStart?: (node: T) => void
+  onRowDragOver?: (
+    source: DropItemOrFile<T>,
+    target: T,
+    canDrop: boolean
+  ) => void
+  onRowDragEnd?: (node: T) => void
 }
 
 export const DnDTableRowType = '__DND_TABLE_ROW__'
@@ -81,4 +91,8 @@ export interface DnDRowRenderProps<T extends DefaultRecordType>
   onNodeDrop: (source: T) => void
   canDropFiles: (dataTransfer: DataTransferItemList) => boolean
   onFilesDrop: (files: File[], dataTransfer: DataTransferItemList) => void
+  // prevent name conflict with native HTML properties with "row"
+  onRowDragStart: () => void
+  onRowDragOver: (draggedItem: DropItemOrFile<T>, canDrop: boolean) => void
+  onRowDragEnd: () => void
 }
