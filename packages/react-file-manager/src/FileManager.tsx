@@ -53,10 +53,14 @@ const FileManager = <T extends FileManagerNode>(
     }
   }
 
-  const getAdditionalRowProps = (node: T): HTMLProps<HTMLTableRowElement> => ({
-    onClick: e => props.onClickRow?.(node, e),
-    onDoubleClick: e => props.onDoubleClickRow?.(node, e)
-  })
+  const getAdditionalRowProps = (node: T): HTMLProps<HTMLTableRowElement> => {
+    const externalProps = props.onRow ? props.onRow(node) : {}
+    return {
+      ...externalProps,
+      onClick: e => props.onClickRow?.(node, e),
+      onDoubleClick: e => props.onDoubleClickRow?.(node, e)
+    }
+  }
 
   const {
     columns = generateDefaultColumns<T>(props.renderNodeTitle),

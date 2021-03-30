@@ -1,5 +1,5 @@
 import {
-  DropItemOrFile,
+  DragSource,
   FileManagerDragLayerProps,
   FileManagerNode
 } from './interfaces'
@@ -7,7 +7,7 @@ import { useDragLayer } from 'react-dnd'
 import React from 'react'
 import { DefaultCustomDragLayer } from './defaults'
 import { useSelectedItems } from './MultiSelectionProvider'
-import { isFileDrop } from './utils'
+import { isFileDrag } from './utils'
 
 export interface CustomDragLayerProps<T extends FileManagerNode> {
   element?: React.FC<FileManagerDragLayerProps<T>>
@@ -20,7 +20,7 @@ const CustomDragLayer = <T extends FileManagerNode>(
   props: CustomDragLayerProps<T>
 ): React.ReactElement | null => {
   const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
-    item: monitor.getItem() as DropItemOrFile<T>,
+    item: monitor.getItem() as DragSource<T>,
     itemType: monitor.getItemType(),
     isDragging: monitor.isDragging(),
     clientOffset: monitor.getClientOffset()
@@ -30,7 +30,7 @@ const CustomDragLayer = <T extends FileManagerNode>(
 
   // Browsers render a default file icon with (+) when dragging a file
   // over a droppable area. I think this cannot be removed...?
-  if (!isDragging || !clientOffset || isFileDrop(item)) {
+  if (!isDragging || !clientOffset || isFileDrag(item)) {
     return null
   }
 

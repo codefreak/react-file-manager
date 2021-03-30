@@ -50,6 +50,11 @@ export interface FileManagerProps<T extends FileManagerNode>
   onRowDragStart?: DnDTableProps<T>['onRowDragStart']
   onRowDragOver?: DnDTableProps<T>['onRowDragOver']
   onRowDragEnd?: DnDTableProps<T>['onRowDragEnd']
+  validDropTargetProps?: HTMLProps<HTMLTableRowElement>
+  validDropTargetOverProps?: HTMLProps<HTMLTableRowElement>
+  invalidDropTargetProps?: HTMLProps<HTMLTableRowElement>
+  invalidDropTargetOverProps?: HTMLProps<HTMLTableRowElement>
+  dragSourceProps?: HTMLProps<HTMLTableRowElement>
 }
 
 export interface FileDropItem {
@@ -69,12 +74,13 @@ export interface DnDTableProps<T = unknown> extends TableProps<T> {
   ) => void
   renderTable?: (props: TableProps<T>) => React.ReactElement
   onRowDragStart?: (node: T) => void
-  onRowDragOver?: (
-    source: DropItemOrFile<T>,
-    target: T,
-    canDrop: boolean
-  ) => void
+  onRowDragOver?: (source: DragSource<T>, target: T, canDrop: boolean) => void
   onRowDragEnd?: (node: T) => void
+  validDropTargetProps?: HTMLProps<HTMLTableRowElement>
+  validDropTargetOverProps?: HTMLProps<HTMLTableRowElement>
+  invalidDropTargetProps?: HTMLProps<HTMLTableRowElement>
+  invalidDropTargetOverProps?: HTMLProps<HTMLTableRowElement>
+  dragSourceProps?: HTMLProps<HTMLTableRowElement>
 }
 
 export const DnDTableRowType = '__DND_TABLE_ROW__'
@@ -82,7 +88,7 @@ export interface DnDTableRowItem<T> {
   node: T
   type: typeof DnDTableRowType
 }
-export type DropItemOrFile<T> = DnDTableRowItem<T> | FileDropItem
+export type DragSource<T> = DnDTableRowItem<T> | FileDropItem
 
 export interface DnDRowRenderProps<T extends DefaultRecordType>
   extends HTMLProps<HTMLTableRowElement> {
@@ -93,6 +99,6 @@ export interface DnDRowRenderProps<T extends DefaultRecordType>
   onFilesDrop: (files: File[], dataTransfer: DataTransferItemList) => void
   // prevent name conflict with native HTML properties with "row"
   onRowDragStart: () => void
-  onRowDragOver: (draggedItem: DropItemOrFile<T>, canDrop: boolean) => void
+  onRowDragOver: (draggedItem: DragSource<T>, canDrop: boolean) => void
   onRowDragEnd: () => void
 }

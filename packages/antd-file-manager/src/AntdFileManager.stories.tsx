@@ -93,15 +93,29 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
 export const Default = Template.bind({})
 Default.args = {
   data: [],
+  invalidDropTargetProps: {
+    style: {
+      opacity: 0.3
+    }
+  },
+  validDropTargetOverProps: {
+    style: {
+      position: 'relative',
+      zIndex: 1,
+      outline: '5px solid rgba(0, 255, 0, .3)'
+    }
+  },
   additionalColumns: [
     {
       dataIndex: 'size',
       title: 'Size',
+      width: '10%',
       render: (value: number) => (value !== undefined ? `${value} bytes` : '--')
     },
     {
       dataIndex: 'mode',
       title: 'Mode',
+      width: '10%',
       render: (value: string) => {
         const mode = parseInt(value, 8)
         return (
@@ -122,10 +136,11 @@ Default.argTypes = {
   onDelete: { action: 'onDelete' },
   onClickRow: { action: 'onClickRow' },
   onDoubleClickRow: { action: 'onDoubleClickRow' },
-  onRowSelectionChange: { action: 'onRowSelectionChange' },
-  onRowDragStart: { action: 'onRowDragStart' },
-  onRowDragOver: { action: 'onRowDragOver' },
-  onRowDragEnd: { action: 'onRowDragEnd' }
+  onRowSelectionChange: { action: 'onRowSelectionChange' }
+  // the following will make the overlay pretty slow
+  //  onRowDragStart: { action: 'onRowDragStart' },
+  //  onRowDragOver: { action: 'onRowDragOver' },
+  //  onRowDragEnd: { action: 'onRowDragEnd' }
 }
 
 export default {

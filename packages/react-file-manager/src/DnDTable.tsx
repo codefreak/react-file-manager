@@ -3,13 +3,13 @@ import {
   DnDTableProps,
   DnDTableRowItem,
   DnDTableRowType,
-  DropItemOrFile
+  DragSource
 } from './interfaces'
-import React, { PropsWithChildren, useEffect, useRef } from 'react'
+import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
 import { DefaultRecordType } from 'rc-table/es/interface'
-import { isFileDrop } from './utils'
+import { isFileDrag } from './utils'
 import { defaultTableRenderer } from './defaults'
 
 const DnDTableRow = <T extends DefaultRecordType>(
@@ -27,17 +27,17 @@ const DnDTableRow = <T extends DefaultRecordType>(
     ...restProps
   } = props
   const ref = useRef<HTMLTableRowElement>(null)
-  const [, drop] = useDrop<DropItemOrFile<T>, unknown, unknown>({
+  const [, drop] = useDrop<DragSource<T>, unknown, unknown>({
     accept: [DnDTableRowType, NativeTypes.FILE],
     drop: item => {
-      if (isFileDrop(item)) {
+      if (isFileDrag(item)) {
         onFilesDrop(item.files, item.items)
       } else {
         onNodeDrop(item.node)
       }
     },
-    canDrop: (item: DropItemOrFile<T>) => {
-      if (isFileDrop(item)) {
+    canDrop: (item: DragSource<T>) => {
+      if (isFileDrag(item)) {
         return canDropFiles(item.items)
       } else {
         return canDropNode(item.node)
@@ -51,7 +51,9 @@ const DnDTableRow = <T extends DefaultRecordType>(
       type: DnDTableRowType,
       node
     },
-    begin: () => onRowDragStart(),
+    begin: () => {
+      onRowDragStart()
+    },
     end: () => onRowDragEnd()
   })
   drag(drop(ref))
@@ -65,6 +67,26 @@ const DnDTableRow = <T extends DefaultRecordType>(
 const DnDTable = <T extends DefaultRecordType>(
   props: DnDTableProps<T>
 ): React.ReactElement => {
+  const [dragSource, setDragSource] = useState<DragSource<T> | undefined>(
+    undefined
+  )
+  const [dropTarget, setDropTarget] = useState<T | undefined>(undefined)
+  const {
+    onRow,
+    validDropTargetProps = {},
+    invalidDropTargetProps = {},
+    validDropTargetOverProps = {},
+    invalidDropTargetOverProps = {},
+    dragSourceProps = {}
+  } = props
+
+  const endDrag = (node: T) => {
+    setDragSource(undefined)
+    setDropTarget(undefined)
+    props.onRowDragEnd?.(node)
+  }
+
+  // TODO: memoization... this gets pretty slow for large tables
   const getAdditionalRowProps = (
     node: T,
     index?: number
@@ -72,12 +94,16 @@ const DnDTable = <T extends DefaultRecordType>(
     let rowProps: DnDRowRenderProps<T> = {
       node,
       canDropNode: source => props.canDropNode(source, node),
-      onNodeDrop: source => props.onDrop(source, node),
+      onNodeDrop: source => {
+        endDrag(node)
+        props.onDrop(source, node)
+      },
       canDropFiles: files => {
         if (!props.canDropFiles) return false
         return props.canDropFiles(files, node)
       },
       onFilesDrop: (files, dataTransfer) => {
+        endDrag(node)
         if (!props.onFilesDrop) return
         props.onFilesDrop(files, dataTransfer, node)
       },
@@ -86,16 +112,61 @@ const DnDTable = <T extends DefaultRecordType>(
       },
       onRowDragOver: (draggedItem, canDrop) => {
         props.onRowDragOver?.(draggedItem, node, canDrop)
+        setDragSource(draggedItem)
+        setDropTarget(node)
       },
-      onRowDragEnd: () => {
-        props.onRowDragEnd?.(node)
+      onRowDragEnd: () => endDrag(node)
+    }
+
+    // add additional props depending on the current d&d status
+    if (dragSource) {
+      let canDrop: boolean
+      if (isFileDrag(dragSource)) {
+        canDrop = props.canDropFiles?.(dragSource.items, node) || false
+      } else {
+        canDrop = props.canDropNode(dragSource.node, node)
+      }
+      if (canDrop) {
+        // valid drop target
+        rowProps = {
+          ...validDropTargetProps,
+          ...rowProps
+        }
+      } else {
+        // invalid drop target
+        rowProps = {
+          ...invalidDropTargetProps,
+          ...rowProps
+        }
+      }
+      if (dropTarget && dropTarget === node) {
+        if (canDrop) {
+          // valid drop target that is being dragged over
+          rowProps = {
+            ...validDropTargetOverProps,
+            ...rowProps
+          }
+        } else {
+          // invalid drop target that is being dragged over
+          rowProps = {
+            ...invalidDropTargetOverProps,
+            ...rowProps
+          }
+        }
+      }
+      // currently dragged node
+      if (!isFileDrag(dragSource) && dragSource.node === node) {
+        rowProps = {
+          ...dragSourceProps,
+          ...rowProps
+        }
       }
     }
 
-    if (props.onRow) {
+    if (onRow) {
       rowProps = {
         ...rowProps,
-        ...props.onRow(node, index)
+        ...onRow(node, index)
       }
     }
 
