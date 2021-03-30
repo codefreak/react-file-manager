@@ -54,8 +54,8 @@ const FileManager = <T extends FileManagerNode>(
   }
 
   const getAdditionalRowProps = (node: T): HTMLProps<HTMLTableRowElement> => ({
-    onClick: (e) => props.onClickRow?.(node, e),
-    onDoubleClick: (e) => props.onDoubleClickRow?.(node, e)
+    onClick: e => props.onClickRow?.(node, e),
+    onDoubleClick: e => props.onDoubleClickRow?.(node, e)
   })
 
   const {

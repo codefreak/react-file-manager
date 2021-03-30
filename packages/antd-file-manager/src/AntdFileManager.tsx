@@ -10,12 +10,12 @@ import { ColumnsType } from 'antd/es/table'
 import FileManager, {
   basename,
   FileManagerNode,
-  FileManagerProps,
   MultiSelectionProvider,
   TableProps
 } from '@codefreak/react-file-manager'
 import AntdDragLayer from './AntdDragLayer'
 import EditableValue from './EditableValue'
+import { AntdFileManagerProps } from './interfaces'
 
 const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
   if (node.type === 'directory') {
@@ -131,11 +131,11 @@ const AntdTable = <T extends FileManagerNode>(
   )
 }
 
-export interface AntdFileManagerProps<T extends FileManagerNode>
-  extends FileManagerProps<T> {
-  onRename?: (node: T, newName: string) => void
-  onDelete?: (nodes: T[]) => void
-  additionalColumns?: ColumnsType<T>
+const getItemsByPath = <T extends FileManagerNode>(
+  items: readonly T[],
+  paths: string[]
+): T[] => {
+  return items.filter(node => paths.indexOf(node.path) !== -1)
 }
 
 const AntdFileManager = <T extends FileManagerNode>(
@@ -143,8 +143,8 @@ const AntdFileManager = <T extends FileManagerNode>(
 ): React.ReactElement => {
   const { data } = props
   const [selectedRows, setSelectedRows] = useState<string[]>([])
-  const selectedItems = useMemo(() => {
-    return data?.filter(node => selectedRows.indexOf(node.path) !== -1) || []
+  const selectedItems: T[] = useMemo(() => {
+    return data ? getItemsByPath(data, selectedRows) : []
   }, [data, selectedRows])
 
   useEffect(() => {
@@ -155,6 +155,13 @@ const AntdFileManager = <T extends FileManagerNode>(
     setSelectedRows(stillAvailableItems)
   }, [data, setSelectedRows, setSelectedRows])
 
+  const onRowSelectionChange = (keys: string[]) => {
+    setSelectedRows(keys)
+    if (data && props.onRowSelectionChange) {
+      props.onRowSelectionChange(getItemsByPath(data, keys))
+    }
+  }
+
   return (
     <MultiSelectionProvider value={selectedItems}>
       <FileManager
@@ -164,7 +171,7 @@ const AntdFileManager = <T extends FileManagerNode>(
           <AntdTable
             {...tableProps}
             selectedRows={selectedRows}
-            onRowSelectionChange={setSelectedRows}
+            onRowSelectionChange={onRowSelectionChange}
             onRename={props.onRename}
             onDelete={props.onDelete}
             additionalColumns={props.additionalColumns}

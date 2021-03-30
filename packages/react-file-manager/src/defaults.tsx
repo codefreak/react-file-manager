@@ -19,8 +19,8 @@ export const defaultActionRenderer = (): React.ReactNode => {
   return 'ACTIONS'
 }
 
-export const basename = (path: string) => {
-  return path.replace(/^.*?\/?([^\/]+)$/, '$1')
+export const basename = (path: string): string => {
+  return path.replace(/^.*?\/?([^/]+)$/, '$1')
 }
 
 export const DefaultCustomDragLayer = <T extends FileManagerNode>(
