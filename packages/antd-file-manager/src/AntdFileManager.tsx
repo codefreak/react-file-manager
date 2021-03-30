@@ -4,15 +4,15 @@ import {
   FileTextFilled,
   FolderFilled
 } from '@ant-design/icons'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Modal, Table as AntdTableComp } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import FileManager, {
-  MultiSelectionProvider,
+  basename,
   FileManagerNode,
   FileManagerProps,
-  TableProps,
-  basename
+  MultiSelectionProvider,
+  TableProps
 } from '@codefreak/react-file-manager'
 import AntdDragLayer from './AntdDragLayer'
 import EditableValue from './EditableValue'
@@ -134,6 +134,8 @@ const AntdTable = <T extends FileManagerNode>(
 export interface AntdFileManagerProps<T extends FileManagerNode>
   extends FileManagerProps<T> {
   onRename?: (node: T, newName: string) => void
+  onDelete?: (nodes: T[]) => void
+  additionalColumns?: ColumnsType<T>
 }
 
 const AntdFileManager = <T extends FileManagerNode>(
@@ -145,18 +147,13 @@ const AntdFileManager = <T extends FileManagerNode>(
     return data?.filter(node => selectedRows.indexOf(node.path) !== -1) || []
   }, [data, selectedRows])
 
-  const onClick = (node: T) => {
-    const index = selectedRows.indexOf(node.path)
-    if (index === -1) {
-      setSelectedRows([...selectedRows, node.path])
-    } else {
-      const newSelectedRows = selectedRows.filter(p => p !== node.path)
-      setSelectedRows(newSelectedRows)
-    }
-    if (props.onClickRow) {
-      props.onClickRow(node)
-    }
-  }
+  useEffect(() => {
+    // intersection between "new" items and selected paths
+    const stillAvailableItems = selectedRows.filter(path => {
+      return data?.find(item => item.path === path)
+    })
+    setSelectedRows(stillAvailableItems)
+  }, [data, setSelectedRows, setSelectedRows])
 
   return (
     <MultiSelectionProvider value={selectedItems}>
@@ -169,9 +166,10 @@ const AntdFileManager = <T extends FileManagerNode>(
             selectedRows={selectedRows}
             onRowSelectionChange={setSelectedRows}
             onRename={props.onRename}
+            onDelete={props.onDelete}
+            additionalColumns={props.additionalColumns}
           />
         )}
-        onClickRow={onClick}
       />
     </MultiSelectionProvider>
   )

@@ -1,4 +1,4 @@
-import React, { HTMLProps } from 'react'
+import React, { HTMLProps, MouseEvent } from 'react'
 import { TableProps as RcTableProps } from 'rc-table/es/Table'
 import { ColumnsType, DefaultRecordType } from 'rc-table/es/interface'
 
@@ -39,8 +39,8 @@ export interface FileManagerProps<T extends FileManagerNode>
     target?: T
   ) => void
   onDelete?: (nodes: T[]) => void
-  onClickRow?: (node: T) => void
-  onDoubleClickRow?: (node: T) => void
+  onClickRow?: (node: T, e: MouseEvent<HTMLTableRowElement>) => void
+  onDoubleClickRow?: (node: T, e: MouseEvent<HTMLTableRowElement>) => void
   renderIcon?: (node: T) => React.ReactNode | undefined
   renderNodeTitle?: (
     props: { node: T },

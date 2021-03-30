@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo } from 'react'
+import React, { HTMLProps, PropsWithChildren, useMemo } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DnDTableProps, FileManagerNode, FileManagerProps } from './interfaces'
@@ -53,9 +53,9 @@ const FileManager = <T extends FileManagerNode>(
     }
   }
 
-  const getAdditionalRowProps = (node: T) => ({
-    onClick: () => props.onClickRow?.(node),
-    onDoubleClick: () => props.onDoubleClickRow?.(node)
+  const getAdditionalRowProps = (node: T): HTMLProps<HTMLTableRowElement> => ({
+    onClick: (e) => props.onClickRow?.(node, e),
+    onDoubleClick: (e) => props.onDoubleClickRow?.(node, e)
   })
 
   const {
