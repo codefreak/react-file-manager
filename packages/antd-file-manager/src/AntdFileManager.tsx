@@ -46,6 +46,7 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
   const {
     data,
     onRename,
+    onDelete,
     onRowSelectionChange,
     antdTableProps = {},
     ...restProps
@@ -54,30 +55,45 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
   const [deletingNode, setDeletingNode] = useState<T | undefined>()
 
   const renderActions = (_: unknown, node: T) => {
-    const onRename = (): void => setRenamingNode(node)
-    const onDelete = (): void => setDeletingNode(node)
-    return (
-      <Button.Group>
+    const buttons = []
+    if (onDelete) {
+      const onDeleteClick = (): void => setDeletingNode(node)
+      buttons.push(
         <Button
-          onClick={onDelete}
+          key="delete"
+          onClick={onDeleteClick}
           icon={<DeleteOutlined style={{ color: 'red' }} />}
         />
-        <Button onClick={onRename} icon={<EditOutlined />} />
-      </Button.Group>
-    )
+      )
+    }
+    if (onRename) {
+      const onRenameClick = (): void => setRenamingNode(node)
+      buttons.push(
+        <Button key="rename" onClick={onRenameClick} icon={<EditOutlined />} />
+      )
+    }
+    if (buttons.length === 0) {
+      return null
+    }
+    return <Button.Group>{buttons}</Button.Group>
   }
 
-  const renderNameColumn = (_: unknown, node: T) => (
-    <EditableValue
-      defaultValue={basename(node.path)}
-      onEditCancel={() => setRenamingNode(undefined)}
-      onEditStart={() => setRenamingNode(node)}
-      editing={renamingNode === node}
-      onChange={newName => {
-        onRename?.(node, newName)
-      }}
-    />
-  )
+  const renderNameColumn = (_: unknown, node: T) => {
+    if (!onRename) {
+      return basename(node.path)
+    }
+    return (
+      <EditableValue
+        defaultValue={basename(node.path)}
+        onEditCancel={() => setRenamingNode(undefined)}
+        onEditStart={() => setRenamingNode(node)}
+        editing={renamingNode === node}
+        onChange={newName => {
+          onRename?.(node, newName)
+        }}
+      />
+    )
+  }
 
   const columns: ColumnsType<T> = [
     {
@@ -104,9 +120,9 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
     }
   ]
 
-  const onDelete = () => {
+  const onDeleteModalOkay = () => {
     if (deletingNode !== undefined) {
-      props.onDelete?.([deletingNode])
+      onDelete?.([deletingNode])
       setDeletingNode(undefined)
     }
   }
@@ -129,7 +145,7 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
       />
       <Modal
         visible={deletingNode !== undefined}
-        onOk={onDelete}
+        onOk={onDeleteModalOkay}
         onCancel={() => setDeletingNode(undefined)}
         title={`Really delete ${deletingNode?.path}?`}
         okButtonProps={{ danger: true }}
