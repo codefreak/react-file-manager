@@ -137,6 +137,10 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
   return (
     <>
       <AntdTableComp
+        {...restProps}
+        size="middle"
+        columns={columns}
+        pagination={false}
         rowSelection={{
           type: 'checkbox',
           selectedRowKeys: props.selectedRows,
@@ -144,11 +148,8 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
             onRowSelectionChange?.(items.map(item => item.path))
           }
         }}
-        dataSource={data}
-        {...restProps}
-        columns={columns}
-        pagination={false}
         {...antdTableProps}
+        dataSource={data}
       />
       <Modal
         visible={deletingNode !== undefined}
