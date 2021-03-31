@@ -3,6 +3,7 @@ import {
   FileManagerNode,
   FileManagerProps
 } from '@codefreak/react-file-manager'
+import React from 'react'
 
 export interface AntdFileManagerProps<T extends FileManagerNode>
   extends FileManagerProps<T> {
@@ -11,4 +12,8 @@ export interface AntdFileManagerProps<T extends FileManagerNode>
   onDelete?: (nodes: T[]) => void
   additionalColumns?: ColumnsType<T>
   onRowSelectionChange?: (selectedNodes: T[]) => void
+  renderActions?: (
+    node: T,
+    defaultActions: React.ReactNode[]
+  ) => React.ReactNode
 }

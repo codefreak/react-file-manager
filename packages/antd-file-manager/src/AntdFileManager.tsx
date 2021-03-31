@@ -32,6 +32,10 @@ interface AntdFileManagerTableProps<T extends FileManagerNode>
   onRowSelectionChange?: (selectedKeys: string[]) => void
   selectedRows?: string[]
   additionalColumns?: ColumnsType<T>
+  renderActions?: (
+    node: T,
+    defaultActions: React.ReactNode[]
+  ) => React.ReactNode
 }
 
 /**
@@ -71,6 +75,9 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
       buttons.push(
         <Button key="rename" onClick={onRenameClick} icon={<EditOutlined />} />
       )
+    }
+    if (props.renderActions) {
+      return props.renderActions(node, buttons)
     }
     if (buttons.length === 0) {
       return null
@@ -199,6 +206,7 @@ const AntdFileManager = <T extends FileManagerNode>(
             onRename={props.onRename}
             onDelete={props.onDelete}
             additionalColumns={props.additionalColumns}
+            renderActions={props.renderActions}
           />
         )}
       />
