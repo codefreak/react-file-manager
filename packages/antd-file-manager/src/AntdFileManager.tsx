@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Modal, Table as AntdTableComp } from 'antd'
-import { ColumnsType } from 'antd/es/table'
+import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import FileManager, {
   basename,
   FileManagerNode,
@@ -26,6 +26,7 @@ const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
 
 interface AntdFileManagerTableProps<T extends FileManagerNode>
   extends TableProps<T> {
+  antdTableProps?: Partial<AntdTableProps<T>>
   onRename?: (node: T, newName: string) => void
   onDelete?: (nodes: T[]) => void
   onRowSelectionChange?: (selectedKeys: string[]) => void
@@ -37,13 +38,18 @@ interface AntdFileManagerTableProps<T extends FileManagerNode>
  * Wrapper that bridges rc-table to antd's Table
  * AntD's table brings some additional functionality like sorting columns
  *
- * @param props
- * @constructor
+ * @internal
  */
-const AntdTable = <T extends FileManagerNode>(
+const AntdFileManagerTable = <T extends FileManagerNode>(
   props: AntdFileManagerTableProps<T>
 ) => {
-  const { data, onRename, onRowSelectionChange, ...restProps } = props
+  const {
+    data,
+    onRename,
+    onRowSelectionChange,
+    antdTableProps = {},
+    ...restProps
+  } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
   const [deletingNode, setDeletingNode] = useState<T | undefined>()
 
@@ -119,6 +125,7 @@ const AntdTable = <T extends FileManagerNode>(
         {...restProps}
         columns={columns}
         pagination={false}
+        {...antdTableProps}
       />
       <Modal
         visible={deletingNode !== undefined}
@@ -141,7 +148,7 @@ const getItemsByPath = <T extends FileManagerNode>(
 const AntdFileManager = <T extends FileManagerNode>(
   props: AntdFileManagerProps<T>
 ): React.ReactElement => {
-  const { data } = props
+  const { data, antdTableProps } = props
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const selectedItems: T[] = useMemo(() => {
     return data ? getItemsByPath(data, selectedRows) : []
@@ -168,8 +175,9 @@ const AntdFileManager = <T extends FileManagerNode>(
         {...props}
         dragLayer={AntdDragLayer}
         renderTable={tableProps => (
-          <AntdTable
+          <AntdFileManagerTable
             {...tableProps}
+            antdTableProps={antdTableProps}
             selectedRows={selectedRows}
             onRowSelectionChange={onRowSelectionChange}
             onRename={props.onRename}

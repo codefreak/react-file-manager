@@ -1,4 +1,4 @@
-import { ColumnsType } from 'antd/es/table'
+import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
   FileManagerNode,
   FileManagerProps
@@ -6,6 +6,7 @@ import {
 
 export interface AntdFileManagerProps<T extends FileManagerNode>
   extends FileManagerProps<T> {
+  antdTableProps?: Partial<AntdTableProps<T>>
   onRename?: (node: T, newName: string) => void
   onDelete?: (nodes: T[]) => void
   additionalColumns?: ColumnsType<T>
