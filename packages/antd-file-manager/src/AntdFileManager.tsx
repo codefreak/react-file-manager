@@ -135,9 +135,6 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
   }
 
   const rowSelection: AntdTableProps<T>['rowSelection'] = {
-    getCheckboxProps: node => ({
-      disabled: node.type === 'file'
-    }),
     type: 'checkbox',
     selectedRowKeys: props.selectedRows,
     onChange: (_, items) => {
