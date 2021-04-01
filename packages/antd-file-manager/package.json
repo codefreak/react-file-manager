@@ -11,8 +11,10 @@
     "!dist/**/*.stories.*"
   ],
   "scripts": {
-    "build": "tsc",
-    "tsc-watch": "tsc -w --preserveWatchOutput"
+    "clean": "rm -rf dist",
+    "build": "rollup -c",
+    "tsc-watch": "tsc -w --preserveWatchOutput",
+    "prepare": "run-s clean build"
   },
   "dependencies": {
     "@codefreak/react-file-manager": "^0.2.0"

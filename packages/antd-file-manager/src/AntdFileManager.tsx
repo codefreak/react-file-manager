@@ -134,6 +134,17 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
     }
   }
 
+  const rowSelection: AntdTableProps<T>['rowSelection'] = {
+    getCheckboxProps: node => ({
+      disabled: node.type === 'file'
+    }),
+    type: 'checkbox',
+    selectedRowKeys: props.selectedRows,
+    onChange: (_, items) => {
+      onRowSelectionChange?.(items.map(item => item.path))
+    }
+  }
+
   return (
     <>
       <AntdTableComp
@@ -141,13 +152,7 @@ const AntdFileManagerTable = <T extends FileManagerNode>(
         size="middle"
         columns={columns}
         pagination={false}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: props.selectedRows,
-          onChange: (_, items) => {
-            onRowSelectionChange?.(items.map(item => item.path))
-          }
-        }}
+        rowSelection={rowSelection}
         {...antdTableProps}
         dataSource={data}
       />
