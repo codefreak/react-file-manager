@@ -2,12 +2,11 @@ import { FileTextFilled } from '@ant-design/icons'
 import { Badge } from 'antd'
 import React from 'react'
 import {
-  FileManagerDragLayerProps,
   FileManagerNode
 } from '@codefreak/react-file-manager'
 
 const AntdDragLayer = <T extends FileManagerNode>(
-  props: FileManagerDragLayerProps<T>
+  props: any
 ): React.ReactElement => {
   const { x, y, draggedItems } = props
   let dragContent = <FileTextFilled style={{ fontSize: '1.5em' }} />

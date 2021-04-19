@@ -13,7 +13,6 @@ import FileManager, {
   MultiSelectionProvider,
   TableProps
 } from '@codefreak/react-file-manager'
-import AntdDragLayer from './AntdDragLayer'
 import EditableValue from './EditableValue'
 import { AntdFileManagerProps } from './interfaces'
 
@@ -44,7 +43,7 @@ interface AntdFileManagerTableProps<T extends FileManagerNode>
  *
  * @internal
  */
-const AntdFileManagerTable = <T extends FileManagerNode>(
+const AntdTableBridge = <T extends FileManagerNode>(
   props: AntdFileManagerTableProps<T>
 ) => {
   const {
@@ -171,7 +170,7 @@ const getItemsByPath = <T extends FileManagerNode>(
   return items.filter(node => paths.indexOf(node.path) !== -1)
 }
 
-const AntdFileManager = <T extends FileManagerNode>(
+const AntdFileManagerTable = <T extends FileManagerNode>(
   props: AntdFileManagerProps<T>
 ): React.ReactElement => {
   const { data, antdTableProps } = props
@@ -199,9 +198,8 @@ const AntdFileManager = <T extends FileManagerNode>(
     <MultiSelectionProvider value={selectedItems}>
       <FileManager
         {...props}
-        dragLayer={AntdDragLayer}
         renderTable={tableProps => (
-          <AntdFileManagerTable
+          <AntdTableBridge
             {...tableProps}
             antdTableProps={antdTableProps}
             selectedRows={selectedRows}
@@ -217,4 +215,4 @@ const AntdFileManager = <T extends FileManagerNode>(
   )
 }
 
-export default AntdFileManager
+export default AntdFileManagerTable

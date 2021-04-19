@@ -1,7 +1,9 @@
-import FileManager from './FileManager'
+import FileManagerTable from './FileManagerTable'
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
 import { FileManagerNode, FileManagerProps } from './interfaces'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const exampleFiles: FileManagerNode[] = [
   {
@@ -19,7 +21,9 @@ const exampleFiles: FileManagerNode[] = [
 ]
 
 const Template: Story<FileManagerProps<FileManagerNode>> = props => (
-  <FileManager {...props} />
+  <DndProvider backend={HTML5Backend}>
+    <FileManagerTable {...props} />
+  </DndProvider>
 )
 
 export const Default = Template.bind({})
@@ -39,5 +43,5 @@ Default.argTypes = {
 }
 
 export default {
-  title: 'FileManager'
+  title: 'FileManagerTable'
 } as Meta

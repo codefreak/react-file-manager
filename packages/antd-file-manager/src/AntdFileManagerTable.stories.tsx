@@ -3,7 +3,9 @@ import { Meta, Story } from '@storybook/react'
 import 'antd/dist/antd.css'
 import { FileManagerNode } from '@codefreak/react-file-manager/dist/interfaces'
 import { useCallback, useEffect, useState } from 'react'
-import AntdFileManager, { AntdFileManagerProps } from './index'
+import AntdFileManagerTable, { AntdFileManagerProps } from './index'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 interface DummyNode extends FileManagerNode {
   size?: number
@@ -81,12 +83,14 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
     }
   }
   return (
-    <AntdFileManager
-      {...restProps}
-      data={files}
-      onDropFiles={onDropFiles}
-      onRename={onRename}
-    />
+    <DndProvider backend={HTML5Backend}>
+      <AntdFileManagerTable
+        {...restProps}
+        data={files}
+        onDropFiles={onDropFiles}
+        onRename={onRename}
+      />
+    </DndProvider>
   )
 }
 
@@ -144,5 +148,5 @@ Default.argTypes = {
 }
 
 export default {
-  title: 'AntdFileManager'
+  title: 'AntdFileManagerTable'
 } as Meta

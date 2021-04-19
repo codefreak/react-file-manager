@@ -8,7 +8,7 @@ import { isMultiMove } from './utils'
 import CustomDragLayer from './CustomDragLayer'
 import { useSelectedItems } from './MultiSelectionProvider'
 
-const FileManager = <T extends FileManagerNode>(
+const FileManagerTable = <T extends FileManagerNode>(
   props: PropsWithChildren<FileManagerProps<T>>
 ): React.ReactElement => {
   const data = props.data || []
@@ -68,20 +68,17 @@ const FileManager = <T extends FileManagerNode>(
   } = props
   const canDropFiles: DnDTableProps<T>['canDropFiles'] = () => true
   return (
-    <DndProvider backend={HTML5Backend}>
-      <CustomDragLayer element={props.dragLayer} />
-      <DnDTable
-        {...tableProps}
-        rowKey="path"
-        columns={columns}
-        canDropNode={canDropNode}
-        onDrop={onNodeDrop}
-        canDropFiles={canDropFiles}
-        onFilesDrop={onFilesDrop}
-        onRow={getAdditionalRowProps}
-      />
-    </DndProvider>
+    <DnDTable
+      {...tableProps}
+      rowKey="path"
+      columns={columns}
+      canDropNode={canDropNode}
+      onDrop={onNodeDrop}
+      canDropFiles={canDropFiles}
+      onFilesDrop={onFilesDrop}
+      onRow={getAdditionalRowProps}
+    />
   )
 }
 
-export default FileManager
+export default FileManagerTable

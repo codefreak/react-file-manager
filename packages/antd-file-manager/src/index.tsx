@@ -1,2 +1,2 @@
 export * from './interfaces'
-export { default } from './AntdFileManager'
+export { default } from './AntdFileManagerTable'

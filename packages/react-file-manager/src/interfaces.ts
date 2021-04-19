@@ -18,12 +18,6 @@ export type TableProps<T> = Pick<
   | 'columns'
 >
 
-export interface FileManagerDragLayerProps<T> {
-  x: number
-  y: number
-  draggedItems: T[]
-}
-
 export interface FileManagerProps<T extends FileManagerNode>
   extends Omit<
     DnDTableProps<T>,
@@ -46,7 +40,6 @@ export interface FileManagerProps<T extends FileManagerNode>
     props: { node: T },
     defaultTitle: string
   ) => React.ReactElement
-  dragLayer?: React.FC<FileManagerDragLayerProps<T>>
   onRowDragStart?: DnDTableProps<T>['onRowDragStart']
   onRowDragOver?: DnDTableProps<T>['onRowDragOver']
   onRowDragEnd?: DnDTableProps<T>['onRowDragEnd']

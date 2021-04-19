@@ -1,4 +1,5 @@
-export { default } from './FileManager'
+export { default } from './FileManagerTable'
+export * from './CustomDragLayer'
 export * from './interfaces'
 export * from './defaults'
 export {
