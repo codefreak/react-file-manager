@@ -158,5 +158,6 @@ Default.argTypes = {
 }
 
 export default {
-  title: 'AntdFileManagerTable'
+  title: 'AntdFileManagerTable',
+  component: AntdFileManagerTable
 } as Meta
