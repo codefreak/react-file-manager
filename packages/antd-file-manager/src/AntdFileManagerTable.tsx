@@ -23,7 +23,7 @@ const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
   return <FileTextFilled style={{ fontSize: '1.5em' }} />
 }
 
-interface AntdFileManagerTableProps<T extends FileManagerNode>
+interface AntdTableBridgeProps<T extends FileManagerNode>
   extends TableProps<T> {
   antdTableProps?: Partial<AntdTableProps<T>>
   onRename?: (node: T, newName: string) => void
@@ -44,7 +44,7 @@ interface AntdFileManagerTableProps<T extends FileManagerNode>
  * @internal
  */
 const AntdTableBridge = <T extends FileManagerNode>(
-  props: AntdFileManagerTableProps<T>
+  props: AntdTableBridgeProps<T>
 ) => {
   const {
     data,
