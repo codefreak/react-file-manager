@@ -8,7 +8,7 @@
   "types": "dist/index",
   "files": [
     "dist",
-    "!dist/**/*.stories.*"
+    "!dist/**/*.{stories,example}.*"
   ],
   "scripts": {
     "clean": "rm -rf dist",

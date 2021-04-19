@@ -1,6 +1,5 @@
 import {
   DragSource,
-  FileManagerDragLayerProps,
   FileManagerNode
 } from './interfaces'
 import { useDragLayer } from 'react-dnd'
@@ -9,15 +8,11 @@ import { DefaultCustomDragLayer } from './defaults'
 import { useSelectedItems } from './MultiSelectionProvider'
 import { isFileDrag } from './utils'
 
-export interface CustomDragLayerProps<T extends FileManagerNode> {
-  element?: React.FC<FileManagerDragLayerProps<T>>
-}
-
 /**
  * HOC that detects file dropping and multi-selection
  */
 const CustomDragLayer = <T extends FileManagerNode>(
-  props: CustomDragLayerProps<T>
+  props: any
 ): React.ReactElement | null => {
   const { isDragging, item, clientOffset } = useDragLayer(monitor => ({
     item: monitor.getItem() as DragSource<T>,

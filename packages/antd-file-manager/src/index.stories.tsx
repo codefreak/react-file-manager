@@ -1,35 +1,12 @@
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
-import 'antd/dist/antd.css'
-import { FileManagerNode } from '@codefreak/react-file-manager/dist/interfaces'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import AntdFileManagerTable, { AntdFileManagerProps } from './index'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import sampleTableData, { DummyNode } from './data.example'
 
-interface DummyNode extends FileManagerNode {
-  size?: number
-  mode: string
-}
-
-interface GitHubTreeElement {
-  path: string
-  type: 'tree'
-  size: number
-  mode: string
-}
-
-const loadKernelFiles = (): Promise<DummyNode[]> =>
-  fetch('https://api.github.com/repos/torvalds/linux/git/trees/master')
-    .then(response => response.json())
-    .then(ghKernelFiles =>
-      ghKernelFiles.tree.map((ghFile: GitHubTreeElement) => ({
-        path: ghFile.path,
-        type: ghFile.type === 'tree' ? 'directory' : 'file',
-        size: ghFile.size || undefined,
-        mode: ghFile.mode
-      }))
-    )
+import 'antd/dist/antd.css'
 
 const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
@@ -67,10 +44,6 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
     [files, setFiles, originalOnDelete]
   )
 
-  useEffect(() => {
-    loadKernelFiles().then(ghKernelFiles => setFiles(ghKernelFiles))
-  }, [setFiles])
-
   const onDropFiles: typeof originalOnDropFiles = (
     newFiles,
     dataTransfer,
@@ -92,21 +65,19 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
     }
   }
   return (
-    <DndProvider backend={HTML5Backend}>
-      <AntdFileManagerTable
-        {...restProps}
-        data={files}
-        onDelete={onDelete}
-        onDropFiles={onDropFiles}
-        onRename={onRename}
-      />
-    </DndProvider>
+    <AntdFileManagerTable
+      {...restProps}
+      data={files}
+      onDelete={onDelete}
+      onDropFiles={onDropFiles}
+      onRename={onRename}
+    />
   )
 }
 
-export const Default = Template.bind({})
-Default.args = {
-  data: [],
+export const Basic = Template.bind({})
+Basic.args = {
+  data: sampleTableData,
   invalidDropTargetProps: {
     style: {
       opacity: 0.3
@@ -143,7 +114,7 @@ Default.args = {
     }
   ]
 }
-Default.argTypes = {
+Basic.argTypes = {
   onDrop: { action: 'onDrop' },
   onDropFiles: { action: 'onDropFiles' },
   onRename: { action: 'onRename' },
@@ -151,13 +122,11 @@ Default.argTypes = {
   onClickRow: { action: 'onClickRow' },
   onDoubleClickRow: { action: 'onDoubleClickRow' },
   onRowSelectionChange: { action: 'onRowSelectionChange' }
-  // the following will make the overlay pretty slow
-  //  onRowDragStart: { action: 'onRowDragStart' },
-  //  onRowDragOver: { action: 'onRowDragOver' },
-  //  onRowDragEnd: { action: 'onRowDragEnd' }
 }
 
 export default {
-  title: 'AntdFileManagerTable',
-  component: AntdFileManagerTable
+  title: 'AntD File Manager',
+  decorators: [
+    (Story) => (<DndProvider backend={HTML5Backend}><Story /></DndProvider>)
+  ]
 } as Meta
