@@ -35,6 +35,7 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
     onDropFiles: originalOnDropFiles,
     onRename: originalOnRename,
+    onDelete: originalOnDelete,
     data: initialFiles,
     ...restProps
   } = props
@@ -55,7 +56,15 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
       )
       originalOnRename?.(node, newName)
     },
-    [files, setFiles]
+    [files, setFiles, originalOnRename]
+  )
+
+  const onDelete = useCallback(
+    (nodes: DummyNode[]) => {
+      setFiles(files.filter(file => !nodes.includes(file)))
+      originalOnDelete?.(nodes)
+    },
+    [files, setFiles, originalOnDelete]
   )
 
   useEffect(() => {
@@ -87,6 +96,7 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
       <AntdFileManagerTable
         {...restProps}
         data={files}
+        onDelete={onDelete}
         onDropFiles={onDropFiles}
         onRename={onRename}
       />
