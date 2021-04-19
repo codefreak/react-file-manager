@@ -170,9 +170,6 @@ const getItemsByPath = <T extends FileManagerNode>(
   return items.filter(node => paths.indexOf(node.path) !== -1)
 }
 
-/**
- * TODO: docs
- */
 const AntdFileManagerTable = <T extends FileManagerNode>(
   props: AntdFileManagerProps<T>
 ): React.ReactElement => {

@@ -1,14 +1,18 @@
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
-import { useCallback, useState } from 'react'
-import AntdFileManagerTable, { AntdFileManagerProps } from './index'
+import { createRef, useCallback, useRef, useState } from 'react'
+import AntdFileManagerTable, {
+  AntdFileManagerProps,
+  AntdDragLayer
+} from './index'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import sampleTableData, { DummyNode } from './data.example'
 
 import 'antd/dist/antd.css'
+import { MultiSelectionProvider } from '@codefreak/react-file-manager'
 
-const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
+const AntdFileManager: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
     onDropFiles: originalOnDropFiles,
     onRename: originalOnRename,
@@ -75,7 +79,7 @@ const Template: Story<AntdFileManagerProps<DummyNode>> = props => {
   )
 }
 
-export const Basic = Template.bind({})
+export const Basic = AntdFileManager.bind({})
 Basic.args = {
   data: sampleTableData,
   invalidDropTargetProps: {
@@ -124,9 +128,29 @@ Basic.argTypes = {
   onRowSelectionChange: { action: 'onRowSelectionChange' }
 }
 
+export const AntdCustomDragLayer = () => {
+  const [selectedNodes, setSelectedNodes] = useState<DummyNode[]>([])
+  return (
+    <MultiSelectionProvider value={selectedNodes}>
+      <AntdDragLayer
+        scrollingElement={{ current: document.scrollingElement }}
+      />
+      <AntdFileManagerTable
+        onRowSelectionChange={setSelectedNodes}
+        hideNativeDragPreview
+        data={sampleTableData}
+      />
+    </MultiSelectionProvider>
+  )
+}
+
 export default {
   title: 'AntD File Manager',
   decorators: [
-    (Story) => (<DndProvider backend={HTML5Backend}><Story /></DndProvider>)
+    Story => (
+      <DndProvider backend={HTML5Backend}>
+        <Story />
+      </DndProvider>
+    )
   ]
 } as Meta

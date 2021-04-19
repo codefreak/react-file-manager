@@ -74,6 +74,7 @@ export interface DnDTableProps<T = unknown> extends TableProps<T> {
   invalidDropTargetProps?: HTMLProps<HTMLTableRowElement>
   invalidDropTargetOverProps?: HTMLProps<HTMLTableRowElement>
   dragSourceProps?: HTMLProps<HTMLTableRowElement>
+  hideNativeDragPreview?: boolean
 }
 
 export const DnDTableRowType = '__DND_TABLE_ROW__'
@@ -86,6 +87,7 @@ export type DragSource<T> = DnDTableRowItem<T> | FileDropItem
 export interface DnDRowRenderProps<T extends DefaultRecordType>
   extends HTMLProps<HTMLTableRowElement> {
   node: T
+  hideNativeDragPreview?: boolean
   canDropNode: (source: T) => boolean
   onNodeDrop: (source: T) => void
   canDropFiles: (dataTransfer: DataTransferItemList) => boolean

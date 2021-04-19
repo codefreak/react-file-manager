@@ -1,4 +1,10 @@
-import { DnDRowRenderProps, DnDTableProps, DnDTableRowItem, DnDTableRowType, DragSource } from './interfaces'
+import {
+  DnDRowRenderProps,
+  DnDTableProps,
+  DnDTableRowItem,
+  DnDTableRowType,
+  DragSource
+} from './interfaces'
 import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
@@ -18,6 +24,7 @@ const DnDTableRow = <T extends DefaultRecordType>(
     onRowDragStart,
     onRowDragOver,
     onRowDragEnd,
+    hideNativeDragPreview,
     ...restProps
   } = props
   const ref = useRef<HTMLTableRowElement>(null)
@@ -43,16 +50,17 @@ const DnDTableRow = <T extends DefaultRecordType>(
   const [, drag, preview] = useDrag<DnDTableRowItem<T>, unknown, unknown>({
     item: () => {
       onRowDragStart()
-      return {node, type: DnDTableRowType}
+      return { node, type: DnDTableRowType }
     },
     type: DnDTableRowType,
     end: () => onRowDragEnd()
   })
   drag(drop(ref))
-  //useEffect(() => {
-  //  // hide default drag preview
-  //  preview(getEmptyImage(), { captureDraggingState: true })
-  //}, [])
+  useEffect(() => {
+    if (hideNativeDragPreview === true) {
+      preview(getEmptyImage(), { captureDraggingState: true })
+    }
+  }, [preview, hideNativeDragPreview])
   return <tr ref={ref} {...restProps} />
 }
 
@@ -85,6 +93,7 @@ const DnDTable = <T extends DefaultRecordType>(
   ): DnDRowRenderProps<T> => {
     let rowProps: DnDRowRenderProps<T> = {
       node,
+      hideNativeDragPreview: props.hideNativeDragPreview,
       canDropNode: source => props.canDropNode(source, node),
       onNodeDrop: source => {
         endDrag(node)

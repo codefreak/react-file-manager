@@ -1,3 +1,3 @@
 export * from './interfaces'
-export * from './AntdDragLayer'
+export { default as AntdDragLayer } from './AntdDragLayer'
 export { default } from './AntdFileManagerTable'
