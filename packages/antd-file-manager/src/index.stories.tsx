@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
-import { createRef, useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import AntdFileManagerTable, {
   AntdFileManagerProps,
   AntdDragLayer
