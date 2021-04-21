@@ -4,14 +4,16 @@ import {
   FileTextFilled,
   FolderFilled
 } from '@ant-design/icons'
-import React, { useState } from 'react'
+import React, { HTMLProps, useState } from 'react'
 import { Button, Modal, Table as AntdTable } from 'antd'
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
   basename,
+  DnDTable,
   DnDTableRow,
   DnDTableRowProps,
-  FileManagerDragSource, FileManagerItemDragType,
+  FileManagerDragSource,
+  FileManagerItemDragType,
   FileManagerNode,
   isFileDrag
 } from '@codefreak/react-file-manager'
@@ -55,13 +57,15 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     }
   }
 
-  const getAdditionalRowProps = (item: T): DnDTableRowProps<T> => {
+  const getAdditionalRowProps = (
+    item: T
+  ): DnDTableRowProps<FileManagerDragSource<T>> => {
     return {
+      enableDrop: item.type === 'directory',
       dragStatus: props.dragStatus,
       hideNativeDragPreview,
       canDropItem: source => canDropOnItem(source, item),
       onDropItem: source => {
-        endDrag(item)
         if (isFileDrag(source)) {
           props.onDropFiles(source.items, item)
         } else {
@@ -169,6 +173,19 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     }
   }
 
+  const ConnectedDnDTable = (tableProps: HTMLProps<HTMLTableElement>) => {
+    return (
+      <DnDTable
+        {...tableProps}
+        onDropItem={source => {
+          props.onDropFiles(source.items)
+        }}
+        hideNativeDragPreview={hideNativeDragPreview}
+        dragStatus={props.rootDragStatusProps}
+      />
+    )
+  }
+
   return (
     <>
       <AntdTable
@@ -179,6 +196,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
         rowSelection={rowSelection}
         {...antdTableProps}
         components={{
+          table: ConnectedDnDTable,
           body: {
             row: DnDTableRow
           }

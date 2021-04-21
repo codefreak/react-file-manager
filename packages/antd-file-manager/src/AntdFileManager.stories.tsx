@@ -95,6 +95,15 @@ Basic.args = {
       }
     }
   },
+  rootDragStatusProps: {
+    validDropTargetOverProps: {
+      style: {
+        position: 'relative',
+        zIndex: 1,
+        outline: '5px solid rgba(0, 255, 0, .3)'
+      }
+    }
+  },
   additionalColumns: [
     {
       dataIndex: 'size',

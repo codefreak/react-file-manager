@@ -12,6 +12,7 @@ export interface FileManagerNode {
 export interface FileDropItem {
   type: '__NATIVE_FILE__'
   items: DataTransferItemList
+  files: File[]
 }
 
 export interface DnDStatus {
@@ -38,9 +39,7 @@ export interface FileManagerItemDrag<T> {
 }
 export type FileManagerDragSource<T> = FileManagerItemDrag<T> | FileDropItem
 
-export interface DnDStatusProps<
-  ElementType extends HTMLElement = HTMLElement
-> {
+export interface DnDStatusProps<ElementType extends HTMLElement = HTMLElement> {
   activeDragSourceProps?: HTMLProps<ElementType>
   validDropTargetProps?: HTMLProps<ElementType>
   validDropTargetOverProps?: HTMLProps<ElementType>
@@ -48,35 +47,21 @@ export interface DnDStatusProps<
   invalidDropTargetOverProps?: HTMLProps<ElementType>
 }
 
-export interface DnDTableRowProps<T extends FileManagerNode>
-  extends HTMLProps<HTMLTableRowElement> {
-  canDropItem: DropTargetHookSpec<
-    FileManagerDragSource<T>,
-    unknown,
-    unknown
-  >['canDrop']
-  onDropItem: DropTargetHookSpec<
-    FileManagerDragSource<T>,
-    unknown,
-    unknown
-  >['drop']
-  onDragOverItem: DropTargetHookSpec<
-    FileManagerDragSource<T>,
-    unknown,
-    unknown
-  >['hover']
-  onDragStartItem: DragSourceHookSpec<
-    FileManagerDragSource<T>,
-    unknown,
-    unknown
-  >['item']
-  onDragEndItem: DragSourceHookSpec<
-    FileManagerDragSource<T>,
-    unknown,
-    unknown
-  >['end']
+export interface DnDTableProps extends HTMLProps<HTMLTableElement> {
+  onDropItem: DropTargetHookSpec<FileDropItem, unknown, unknown>['drop']
+  dragStatus?: DnDStatusProps<HTMLTableElement>
+  hideNativeDragPreview: boolean
+}
+
+export interface DnDTableRowProps<T> extends HTMLProps<HTMLTableRowElement> {
+  canDropItem: DropTargetHookSpec<T, unknown, unknown>['canDrop']
+  onDropItem: DropTargetHookSpec<T, unknown, unknown>['drop']
+  onDragOverItem: DropTargetHookSpec<T, unknown, unknown>['hover']
+  onDragStartItem: DragSourceHookSpec<T, unknown, unknown>['item']
+  onDragEndItem: DragSourceHookSpec<T, unknown, unknown>['end']
   hideNativeDragPreview: boolean
   dragStatus?: DnDStatusProps<HTMLTableRowElement>
+  enableDrop: boolean
 }
 
 export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
@@ -97,7 +82,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
     | ((dataTransferItems: DataTransferItemList, target: RecordType) => boolean)
   onDropFiles: (
     dataTransferItems: DataTransferItemList,
-    target: RecordType
+    target?: RecordType
   ) => void
   onDeleteItems?: (item: RecordType[]) => void
   onRenameItem?: (item: RecordType, newName: string) => void
@@ -105,6 +90,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   onClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
   onDoubleClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
   dragStatus?: DnDStatusProps<HTMLTableRowElement>
+  rootDragStatusProps?: DnDStatusProps<HTMLTableElement>
   hideNativeDragPreview: boolean
 }
 
@@ -137,6 +123,7 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   | 'onClickItem'
   | 'onDoubleClickItem'
   | 'dragStatus'
+  | 'rootDragStatusProps'
   | 'onSelectionChange'
 > & {
   renderer: FileManagerRenderComponent<RecordType>
@@ -153,6 +140,6 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
     | ((dataTransferItems: DataTransferItemList, target: RecordType) => boolean)
   onDropFiles?: (
     dataTransferItems: DataTransferItemList,
-    target: RecordType
+    target?: RecordType
   ) => void
 }
