@@ -5,11 +5,8 @@ export const isFileDrag = (obj: unknown): obj is FileDropItem => {
     typeof obj === 'object' && obj !== null && 'items' in obj && 'files' in obj
   )
 }
-export const isMultiMove = (
-  selectedPaths: string[],
-  draggedItemPath: string
-): boolean => {
-  return (
-    selectedPaths.length > 1 && selectedPaths.indexOf(draggedItemPath) !== -1
-  )
+export const isMultiMove = <T>(selectedItems: T[], draggedItem: T): boolean => {
+  return selectedItems.length > 1 && selectedItems.indexOf(draggedItem) !== -1
 }
+
+export const basename = (path: string): string => path

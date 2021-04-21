@@ -1,9 +1,5 @@
-export { default } from './FileManagerTable'
-export * from './CustomDragLayer'
+export { default } from './FileManager'
 export * from './interfaces'
-export * from './defaults'
 export * from './utils'
-export {
-  default as MultiSelectionProvider,
-  useSelectedItems
-} from './MultiSelectionProvider'
+export { default as DnDTableRow } from './DnDTableRow'
+

@@ -1,23 +1,19 @@
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
 import { useCallback, useState } from 'react'
-import AntdFileManagerTable, {
-  AntdFileManagerProps,
-  AntdDragLayer
-} from './index'
+import AntdFileManager, { AntdFileManagerProps, AntdDragLayer } from './index'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import sampleTableData, { DummyNode } from './data.example'
 
 import 'antd/dist/antd.css'
-import { MultiSelectionProvider } from '@codefreak/react-file-manager'
 
-const AntdFileManager: Story<AntdFileManagerProps<DummyNode>> = props => {
+const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
     onDropFiles: originalOnDropFiles,
-    onRename: originalOnRename,
-    onDelete: originalOnDelete,
-    data: initialFiles,
+    onRenameItem: originalOnRename,
+    onDeleteItems: originalOnDelete,
+    dataSource: initialFiles,
     ...restProps
   } = props
   const [files, setFiles] = useState(initialFiles || [])
@@ -48,50 +44,55 @@ const AntdFileManager: Story<AntdFileManagerProps<DummyNode>> = props => {
     [files, setFiles, originalOnDelete]
   )
 
-  const onDropFiles: typeof originalOnDropFiles = (
-    newFiles,
-    dataTransfer,
-    target
-  ) => {
+  const onDropFiles: typeof originalOnDropFiles = (dataTransfer, target) => {
     if (target === undefined) {
-      const addFiles = newFiles.map(
-        (file): DummyNode => ({
+      const addFiles: DummyNode[] = []
+      for (let i = 0; i < dataTransfer.length; i++) {
+        const file = dataTransfer[i].getAsFile()
+        if (!file) continue
+        addFiles.push({
           path: file.name,
           type: 'file',
           mode: '100777',
           size: file.size
         })
-      )
+      }
       setFiles([...addFiles, ...files])
     }
     if (originalOnDropFiles) {
-      originalOnDropFiles(newFiles, dataTransfer, target)
+      originalOnDropFiles(dataTransfer, target)
     }
   }
   return (
-    <AntdFileManagerTable
+    <AntdFileManager
       {...restProps}
-      data={files}
-      onDelete={onDelete}
+      dataSource={files}
+      onDeleteItems={onDelete}
       onDropFiles={onDropFiles}
-      onRename={onRename}
+      onRenameItem={onRename}
     />
   )
 }
 
-export const Basic = AntdFileManager.bind({})
+export const Basic = AntdFileManagerStory.bind({})
 Basic.args = {
-  data: sampleTableData,
-  invalidDropTargetProps: {
-    style: {
-      opacity: 0.3
-    }
+  dataSource: sampleTableData,
+  dataKey: 'path',
+  canDropFiles: (_, target) => {
+    return target.type === 'directory'
   },
-  validDropTargetOverProps: {
-    style: {
-      position: 'relative',
-      zIndex: 1,
-      outline: '5px solid rgba(0, 255, 0, .3)'
+  dragStatus: {
+    invalidDropTargetProps: {
+      style: {
+        opacity: 0.3
+      }
+    },
+    validDropTargetOverProps: {
+      style: {
+        position: 'relative',
+        zIndex: 1,
+        outline: '5px solid rgba(0, 255, 0, .3)'
+      }
     }
   },
   additionalColumns: [
@@ -117,30 +118,31 @@ Basic.args = {
       }
     }
   ]
-}
+} as Partial<AntdFileManagerProps<DummyNode>>
+
 Basic.argTypes = {
-  onDrop: { action: 'onDrop' },
+  onDropItems: { action: 'onDropItems' },
   onDropFiles: { action: 'onDropFiles' },
-  onRename: { action: 'onRename' },
-  onDelete: { action: 'onDelete' },
-  onClickRow: { action: 'onClickRow' },
-  onDoubleClickRow: { action: 'onDoubleClickRow' },
+  onRenameItem: { action: 'onRenameItem' },
+  onDeleteItems: { action: 'onDeleteItems' },
+  onClickItem: { action: 'onClickItem' },
+  onDoubleClickItem: { action: 'onDoubleClickItem' },
   onRowSelectionChange: { action: 'onRowSelectionChange' }
 }
 
 export const AntdCustomDragLayer = () => {
   const [selectedNodes, setSelectedNodes] = useState<DummyNode[]>([])
   return (
-    <MultiSelectionProvider value={selectedNodes}>
+    <>
       <AntdDragLayer
         scrollingElement={{ current: document.scrollingElement }}
       />
-      <AntdFileManagerTable
-        onRowSelectionChange={setSelectedNodes}
-        hideNativeDragPreview
-        data={sampleTableData}
+      <AntdFileManager
+        dataSource={sampleTableData}
+        dataKey="path"
+        onSelectionChange={setSelectedNodes}
       />
-    </MultiSelectionProvider>
+    </>
   )
 }
 
