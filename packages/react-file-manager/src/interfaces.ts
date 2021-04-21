@@ -1,4 +1,9 @@
 import React, { HTMLProps } from 'react'
+import {
+  DragSourceHookSpec,
+  DropTargetHookSpec,
+  DropTargetMonitor
+} from 'react-dnd'
 
 export interface FileManagerNode {
   type: 'file' | 'directory'
@@ -16,16 +21,13 @@ export interface DnDTableRowItem<T> {
 }
 export type DragSource<T> = DnDTableRowItem<T> | FileDropItem
 
-export interface DnDRowRenderProps<T extends FileManagerNode>
+export interface DnDTableRowProps<T extends FileManagerNode>
   extends HTMLProps<HTMLTableRowElement> {
-  item: T
-  canDropItem: (source: T) => boolean
-  onDropItem: (source: T) => void
-  canDropFiles: (dataTransferItems: DataTransferItemList) => boolean
-  onDropFiles: (dataTransferItems: DataTransferItemList) => void
-  onRowDragStart: () => void
-  onRowDragOver: (draggedItem: DragSource<T>, canDrop: boolean) => void
-  onRowDragEnd: () => void
+  canDropItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['canDrop']
+  onDropItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['drop']
+  onDragOverItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['hover']
+  onDragStartItem: DragSourceHookSpec<DragSource<T>, unknown, unknown>['item']
+  onDragEndItem: DragSourceHookSpec<DragSource<T>, unknown, unknown>['end']
   hideNativeDragPreview: boolean
 }
 
@@ -38,7 +40,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   onDragOverItem?: (
     source: DragSource<RecordType>,
     target: RecordType,
-    canDrop: boolean
+    dragSourceMonitor: DropTargetMonitor<RecordType>
   ) => void
   canDropItem: boolean | ((source: RecordType, target: RecordType) => boolean)
   onDropItem: (source: RecordType, target: RecordType) => void
