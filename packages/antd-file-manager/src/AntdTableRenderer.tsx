@@ -197,11 +197,14 @@ const AntdTableRenderer = <T extends FileManagerNode>(
       />
     )
   }
+  // shouldCellUpdate: () => false will improve rendering performance
+  // see https://github.com/ant-design/ant-design/issues/23763#issuecomment-671096972
   const columns: ColumnsType<T> = [
     {
       key: 'icon',
       render: antdIconRenderer,
-      width: 1
+      width: 1,
+      shouldCellUpdate: () => false
     },
     {
       key: 'name',
@@ -212,13 +215,15 @@ const AntdTableRenderer = <T extends FileManagerNode>(
           sensitivity: 'base'
         }),
       defaultSortOrder: 'ascend',
-      render: renderNameColumn
+      render: renderNameColumn,
+      shouldCellUpdate: () => false
     },
     ...(props.additionalColumns || []),
     {
       key: 'actions',
       render: renderActions,
-      width: 1
+      width: 1,
+      shouldCellUpdate: () => false
     }
   ]
 
