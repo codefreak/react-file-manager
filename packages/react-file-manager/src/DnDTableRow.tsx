@@ -1,12 +1,8 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
-import {
-  DnDTableRowProps,
-  DnDTableRowType,
-  DragSource,
-  FileManagerNode
-} from './interfaces'
+import { DnDTableRowProps, FileManagerDragSource, FileManagerItemDragType, FileManagerNode } from './interfaces'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
+import { getDnDHtmlStatusProps } from './utils'
 
 export const DnDTableRow = <T extends FileManagerNode>(
   props: PropsWithChildren<DnDTableRowProps<T>>
@@ -18,18 +14,35 @@ export const DnDTableRow = <T extends FileManagerNode>(
     onDragOverItem,
     onDragEndItem,
     hideNativeDragPreview,
+    dragStatus,
     ...additionalHtmlProps
   } = props
-  const [, drop] = useDrop<DragSource<T>, unknown, unknown>({
-    accept: [DnDTableRowType, NativeTypes.FILE],
+  const [{ isOver, isDragging, canDrop }, drop] = useDrop<
+    FileManagerDragSource<T>,
+    unknown,
+    { isOver: boolean; canDrop: boolean; isDragging: boolean }
+  >({
+    accept: [FileManagerItemDragType, NativeTypes.FILE],
     drop: onDropItem,
     canDrop: canDropItem,
-    hover: onDragOverItem
+    hover: onDragOverItem,
+    collect: targetMonitor => ({
+      isOver: targetMonitor.isOver(),
+      canDrop: targetMonitor.canDrop(),
+      isDragging: !!targetMonitor.getItem()
+    })
   })
-  const [, drag, preview] = useDrag<DragSource<T>, unknown, unknown>({
+  const [{ isCurrentDragSource }, drag, preview] = useDrag<
+    FileManagerDragSource<T>,
+    unknown,
+    { isCurrentDragSource: boolean }
+  >({
     item: onDragStartItem,
-    type: DnDTableRowType,
-    end: onDragEndItem
+    type: FileManagerItemDragType,
+    end: onDragEndItem,
+    collect: sourceMonitor => ({
+      isCurrentDragSource: sourceMonitor.isDragging()
+    })
   })
   const rowRef = useRef<HTMLTableRowElement>(null)
   drag(drop(rowRef))
@@ -38,7 +51,19 @@ export const DnDTableRow = <T extends FileManagerNode>(
       preview(getEmptyImage(), { captureDraggingState: true })
     }
   }, [preview, hideNativeDragPreview])
-  return <tr {...additionalHtmlProps} ref={rowRef} />
+
+  const rowHtmlProps = dragStatus
+    ? getDnDHtmlStatusProps(
+        {
+          canDrop,
+          isOver,
+          isDragging,
+          isCurrentDragSource
+        },
+        dragStatus
+      )
+    : {}
+  return <tr {...additionalHtmlProps} {...rowHtmlProps} ref={rowRef} />
 }
 
 export default DnDTableRow

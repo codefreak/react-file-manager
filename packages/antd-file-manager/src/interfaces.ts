@@ -1,5 +1,6 @@
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
+  DragStatusProps,
   FileManagerNode,
   FileManagerProps,
   FileManagerRendererProps
@@ -16,6 +17,7 @@ export interface AntdTableRendererProps<T extends FileManagerNode>
     node: T,
     defaultActions: React.ReactNode[]
   ) => React.ReactNode
+  dragStatus?: DragStatusProps<HTMLTableRowElement>
 }
 
 export type AntdFileManagerProps<T extends FileManagerNode> = Omit<

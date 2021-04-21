@@ -14,21 +14,69 @@ export interface FileDropItem {
   items: DataTransferItemList
 }
 
-export const DnDTableRowType = '__DND_TABLE_ROW__'
-export interface DnDTableRowItem<T> {
-  item: T
-  type: typeof DnDTableRowType
+export interface DnDStatus {
+  /**
+   * In contrast to the react-dnd monitor method this indicates if we are
+   * globally in a DnD state
+   */
+  isDragging: boolean
+  /**
+   * Indicates if this row is currently being dragged
+   */
+  isCurrentDragSource: boolean
+  /**
+   * Are we currently dragging over this element?
+   */
+  isOver: boolean
+  canDrop: boolean
 }
-export type DragSource<T> = DnDTableRowItem<T> | FileDropItem
+
+export const FileManagerItemDragType = 'REACT_FILE_MANAGER_ITEM'
+export interface FileManagerItemDrag<T> {
+  item: T
+  type: typeof FileManagerItemDragType
+}
+export type FileManagerDragSource<T> = FileManagerItemDrag<T> | FileDropItem
+
+export interface DnDStatusProps<
+  ElementType extends HTMLElement = HTMLElement
+> {
+  activeDragSourceProps?: HTMLProps<ElementType>
+  validDropTargetProps?: HTMLProps<ElementType>
+  validDropTargetOverProps?: HTMLProps<ElementType>
+  invalidDropTargetProps?: HTMLProps<ElementType>
+  invalidDropTargetOverProps?: HTMLProps<ElementType>
+}
 
 export interface DnDTableRowProps<T extends FileManagerNode>
   extends HTMLProps<HTMLTableRowElement> {
-  canDropItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['canDrop']
-  onDropItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['drop']
-  onDragOverItem: DropTargetHookSpec<DragSource<T>, unknown, unknown>['hover']
-  onDragStartItem: DragSourceHookSpec<DragSource<T>, unknown, unknown>['item']
-  onDragEndItem: DragSourceHookSpec<DragSource<T>, unknown, unknown>['end']
+  canDropItem: DropTargetHookSpec<
+    FileManagerDragSource<T>,
+    unknown,
+    unknown
+  >['canDrop']
+  onDropItem: DropTargetHookSpec<
+    FileManagerDragSource<T>,
+    unknown,
+    unknown
+  >['drop']
+  onDragOverItem: DropTargetHookSpec<
+    FileManagerDragSource<T>,
+    unknown,
+    unknown
+  >['hover']
+  onDragStartItem: DragSourceHookSpec<
+    FileManagerDragSource<T>,
+    unknown,
+    unknown
+  >['item']
+  onDragEndItem: DragSourceHookSpec<
+    FileManagerDragSource<T>,
+    unknown,
+    unknown
+  >['end']
   hideNativeDragPreview: boolean
+  dragStatus?: DnDStatusProps<HTMLTableRowElement>
 }
 
 export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
@@ -38,7 +86,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   onDragStartItem?: (item: RecordType) => void
   onDragEndItem?: (item: RecordType) => void
   onDragOverItem?: (
-    source: DragSource<RecordType>,
+    source: FileManagerDragSource<RecordType>,
     target: RecordType,
     dragSourceMonitor: DropTargetMonitor<RecordType>
   ) => void
@@ -56,13 +104,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   // TODO: valid prop types instead of unknown
   onClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
   onDoubleClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
-  dragStatus?: {
-    activeDragSourceProps?: HTMLProps<any>
-    validDropTargetProps?: HTMLProps<any>
-    validDropTargetOverProps?: HTMLProps<any>
-    invalidDropTargetProps?: HTMLProps<any>
-    invalidDropTargetOverProps?: HTMLProps<any>
-  }
+  dragStatus?: DnDStatusProps<HTMLTableRowElement>
   hideNativeDragPreview: boolean
 }
 

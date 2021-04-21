@@ -1,15 +1,10 @@
 import React from 'react'
-import FileManager, {
-  FileManagerNode,
-  FileManagerRenderComponent
-} from '@codefreak/react-file-manager'
+import FileManager, { FileManagerNode } from '@codefreak/react-file-manager'
 import { AntdFileManagerProps } from './interfaces'
 import AntdTableRenderer from './AntdTableRenderer'
 import { AntdDragLayer } from './index'
 
-const getAntdRendererByName = <T extends FileManagerNode>(
-  name: 'table'
-): FileManagerRenderComponent<T> => {
+const getAntdRendererByName = <T extends FileManagerNode>(name: 'table') => {
   if (name === 'table') {
     return AntdTableRenderer
   }

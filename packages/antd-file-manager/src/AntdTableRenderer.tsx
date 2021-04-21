@@ -11,7 +11,7 @@ import {
   basename,
   DnDTableRow,
   DnDTableRowProps,
-  DragSource,
+  FileManagerDragSource, FileManagerItemDragType,
   FileManagerNode,
   isFileDrag
 } from '@codefreak/react-file-manager'
@@ -41,17 +41,11 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
   const [deletingNodes, setDeletingNodes] = useState<T[] | undefined>()
-  const [dragSource, setDragSource] = useState<DragSource<T> | undefined>(
-    undefined
-  )
-  const [dropTarget, setDropTarget] = useState<T | undefined>(undefined)
   const endDrag = (node: T) => {
-    setDragSource(undefined)
-    setDropTarget(undefined)
     props.onDragEndItem?.(node)
   }
 
-  const canDropOnItem = (source: DragSource<T>, target: T) => {
+  const canDropOnItem = (source: FileManagerDragSource<T>, target: T) => {
     if (isFileDrag(source)) {
       if (typeof props.canDropFiles !== 'function') return !!props.canDropFiles
       return props.canDropFiles(source.items, target)
@@ -61,72 +55,9 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     }
   }
 
-  /**
-   * Determine additional props depending on the current d&d status
-   * @param item
-   */
-  const getRowHtmlStatusProps = (
-    item: T
-  ): React.HTMLProps<HTMLTableRowElement> => {
-    const {
-      activeDragSourceProps,
-      invalidDropTargetOverProps,
-      invalidDropTargetProps,
-      validDropTargetOverProps,
-      validDropTargetProps
-    } = dragStatus
-    let rowHtmlProps = {}
-    if (dragSource) {
-      const canDrop = canDropOnItem(dragSource, item)
-      if (canDrop) {
-        // valid drop target
-        rowHtmlProps = {
-          ...validDropTargetProps,
-          ...rowHtmlProps
-        }
-      } else {
-        // invalid drop target
-        rowHtmlProps = {
-          ...invalidDropTargetProps,
-          ...rowHtmlProps
-        }
-      }
-      if (dropTarget && dropTarget === item) {
-        if (canDrop) {
-          // valid drop target that is being dragged over
-          rowHtmlProps = {
-            ...validDropTargetOverProps,
-            ...rowHtmlProps
-          }
-        } else {
-          // invalid drop target that is being dragged over
-          rowHtmlProps = {
-            ...invalidDropTargetOverProps,
-            ...rowHtmlProps
-          }
-        }
-      }
-      // currently dragged node
-      if (!isFileDrag(dragSource) && dragSource.item === item) {
-        rowHtmlProps = {
-          ...activeDragSourceProps,
-          ...rowHtmlProps
-        }
-      }
-    }
-
-    return rowHtmlProps
-  }
-
-  /**
-   * Determine props that will be passed to each row
-   *
-   * TODO: Memoization? Dragging over an item will re-render every item and not only affected rows
-   * @param item
-   */
   const getAdditionalRowProps = (item: T): DnDTableRowProps<T> => {
     return {
-      ...getRowHtmlStatusProps(item),
+      dragStatus: props.dragStatus,
       hideNativeDragPreview,
       canDropItem: source => canDropOnItem(source, item),
       onDropItem: source => {
@@ -137,18 +68,15 @@ const AntdTableRenderer = <T extends FileManagerNode>(
           props.onDropItem(source.item, item)
         }
       },
-      onDragStartItem: () => {
+      onDragStartItem: source => {
         props.onDragStartItem?.(item)
         return {
           item,
-          type: '__DND_TABLE_ROW__'
+          type: FileManagerItemDragType
         }
       },
       onDragOverItem: (source, dropTargetMonitor) => {
         props.onDragOverItem?.(source, item, dropTargetMonitor)
-        // this is necessary because file dragging will not cause a drag start
-        setDragSource(source)
-        setDropTarget(item)
       },
       onDragEndItem: () => endDrag(item)
     }
