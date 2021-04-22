@@ -64,6 +64,7 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
         .filter((item): item is File => item !== null)
         .map(file => ({
           path: file.name,
+          basename: file.name,
           type: 'file',
           mode: '100777',
           size: file.size
@@ -155,9 +156,7 @@ export const AntdCustomDragLayer = () => {
   const [selectedNodes, setSelectedNodes] = useState<DummyNode[]>([])
   return (
     <>
-      <AntdDragLayer
-        scrollingElement={{ current: document.scrollingElement }}
-      />
+      <AntdDragLayer />
       <AntdFileManager
         dataSource={sampleTableData}
         dataKey="path"

@@ -8,25 +8,26 @@ import React, { HTMLProps, useState } from 'react'
 import { Button, Table as AntdTable } from 'antd'
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
-  basename,
   DnDTable,
   DnDTableRow,
   DnDTableRowProps,
   FileManagerDragSource,
-  FileManagerItemDragType,
-  FileManagerNode
+  FileManagerItemDragType
 } from '@codefreak/react-file-manager'
 import EditableValue from './EditableValue'
-import { AntdTableRendererProps } from './interfaces'
+import { AntdFileManagerNode, AntdTableRendererProps } from './interfaces'
 
-const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
+const antdIconRenderer = <T extends AntdFileManagerNode>(
+  _: unknown,
+  node: T
+) => {
   if (node.type === 'directory') {
     return <FolderFilled style={{ fontSize: '1.5em' }} />
   }
   return <FileTextFilled style={{ fontSize: '1.5em' }} />
 }
 
-const AntdTableRenderer = <T extends FileManagerNode>(
+const AntdTableRenderer = <T extends AntdFileManagerNode>(
   props: AntdTableRendererProps<T>
 ) => {
   const {
@@ -108,11 +109,11 @@ const AntdTableRenderer = <T extends FileManagerNode>(
 
   const renderNameColumn = (_: unknown, node: T) => {
     if (!onRenameItem) {
-      return basename(node.path)
+      return node.basename
     }
     return (
       <EditableValue
-        defaultValue={basename(node.path)}
+        defaultValue={node.basename}
         onEditCancel={() => setRenamingNode(undefined)}
         onEditStart={() => setRenamingNode(node)}
         editing={renamingNode === node}

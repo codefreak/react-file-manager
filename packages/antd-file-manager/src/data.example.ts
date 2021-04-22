@@ -1,6 +1,6 @@
-import { FileManagerNode } from '@codefreak/react-file-manager'
+import { AntdFileManagerNode } from './interfaces'
 
-export interface DummyNode extends FileManagerNode {
+export interface DummyNode extends AntdFileManagerNode {
   size?: number
   mode: string
 }
@@ -44,6 +44,9 @@ const dummyData = [
   { path: 'tools', type: 'directory', mode: '040000' },
   { path: 'usr', type: 'directory', mode: '040000' },
   { path: 'virt', type: 'directory', mode: '040000' }
-] as DummyNode[]
+]
 
-export default dummyData
+export default dummyData.map(dummyNode => ({
+  basename: dummyNode.path,
+  ...dummyNode
+})) as DummyNode[]

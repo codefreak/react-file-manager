@@ -7,8 +7,6 @@ export const isFileDrag = (obj: unknown): obj is FileDropItem => {
   )
 }
 
-export const basename = (path: string): string => path
-
 /**
  * Determine additional html props depending on the current d&d status for an individual item
  */

@@ -6,16 +6,23 @@ import {
 } from '@codefreak/react-file-manager'
 import React from 'react'
 
+export interface AntdFileManagerNode extends FileManagerNode {
+  /**
+   * Required to make renaming work
+   */
+  basename: string
+}
+
 export interface AntdDragLayerProps {
   relativeToElement?: React.RefObject<Element>
   additionalStyle?: React.HTMLProps<HTMLDivElement>['style']
 }
 
-export interface AntdTableRendererProps<T extends FileManagerNode>
+export interface AntdTableRendererProps<T extends AntdFileManagerNode>
   extends FileManagerRendererProps<T> {
   antdTableProps?: Partial<AntdTableProps<T>>
   additionalColumns?: ColumnsType<T>
-  onRenameItem?: (node: T, newName: string) => void
+  onRenameItem?: (node: T, newBasename: string) => void
   onDeleteItems?: (items: T[]) => void
   renderActions?: (
     node: T,
@@ -23,7 +30,7 @@ export interface AntdTableRendererProps<T extends FileManagerNode>
   ) => React.ReactNode
 }
 
-export type AntdFileManagerProps<T extends FileManagerNode> = Omit<
+export type AntdFileManagerProps<T extends AntdFileManagerNode> = Omit<
   FileManagerProps<T>,
   'renderer'
 > &

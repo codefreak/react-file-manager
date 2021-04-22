@@ -1,16 +1,18 @@
 import React from 'react'
-import FileManager, { FileManagerNode } from '@codefreak/react-file-manager'
-import { AntdFileManagerProps } from './interfaces'
+import FileManager from '@codefreak/react-file-manager'
+import { AntdFileManagerNode, AntdFileManagerProps } from './interfaces'
 import AntdTableRenderer from './AntdTableRenderer'
 
-const getAntdRendererByName = <T extends FileManagerNode>(name: 'table') => {
+const getAntdRendererByName = <T extends AntdFileManagerNode>(
+  name: 'table'
+) => {
   if (name === 'table') {
     return AntdTableRenderer
   }
   throw `Unknown renderer ${name}`
 }
 
-const AntdFileManager = <T extends FileManagerNode>(
+const AntdFileManager = <T extends AntdFileManagerNode>(
   props: AntdFileManagerProps<T>
 ) => {
   const { renderType = 'table' } = props
