@@ -183,7 +183,9 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       components={{
         table: ConnectedDnDTable,
         body: {
-          row: DnDTableRow
+          // disable our custom drag&drop table row when there is no data
+          // otherwise antd will render the "no data" table row with d&d capabilities
+          row: dataSource.length > 0 ? DnDTableRow : undefined
         }
       }}
       onRow={getAdditionalRowProps}
