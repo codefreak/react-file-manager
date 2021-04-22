@@ -49,7 +49,7 @@ export interface DnDStatusProps<ElementType extends HTMLElement = HTMLElement> {
 
 export interface DnDTableProps extends HTMLProps<HTMLTableElement> {
   onDropItem: DropTargetHookSpec<FileDropItem, unknown, unknown>['drop']
-  dragStatus?: DnDStatusProps<HTMLTableElement>
+  dndStatusProps?: DnDStatusProps<HTMLTableElement>
   hideNativeDragPreview: boolean
 }
 
@@ -60,7 +60,7 @@ export interface DnDTableRowProps<T> extends HTMLProps<HTMLTableRowElement> {
   onDragStartItem: DragSourceHookSpec<T, unknown, unknown>['item']
   onDragEndItem: DragSourceHookSpec<T, unknown, unknown>['end']
   hideNativeDragPreview: boolean
-  dragStatus?: DnDStatusProps<HTMLTableRowElement>
+  dndStatusProps?: DnDStatusProps<HTMLTableRowElement>
   enableDrop: boolean
 }
 
@@ -89,8 +89,8 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   // TODO: valid prop types instead of unknown
   onClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
   onDoubleClickItem?: (node: RecordType, e: React.MouseEvent<unknown>) => void
-  dragStatus?: DnDStatusProps<HTMLTableRowElement>
-  rootDragStatusProps?: DnDStatusProps<HTMLTableElement>
+  itemDndStatusProps?: DnDStatusProps<HTMLTableRowElement>
+  rootDndStatusProps?: DnDStatusProps<HTMLTableElement>
   hideNativeDragPreview: boolean
 }
 
@@ -122,8 +122,8 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   | 'dataKey'
   | 'onClickItem'
   | 'onDoubleClickItem'
-  | 'dragStatus'
-  | 'rootDragStatusProps'
+  | 'itemDndStatusProps'
+  | 'rootDndStatusProps'
   | 'onSelectionChange'
 > & {
   renderer: FileManagerRenderComponent<RecordType>

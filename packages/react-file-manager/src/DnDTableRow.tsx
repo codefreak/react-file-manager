@@ -15,7 +15,7 @@ export const DnDTableRow = <T extends DefaultRecordType>(
     onDragOverItem,
     onDragEndItem,
     hideNativeDragPreview,
-    dragStatus,
+    dndStatusProps = {},
     enableDrop,
     ...additionalHtmlProps
   } = props
@@ -60,17 +60,15 @@ export const DnDTableRow = <T extends DefaultRecordType>(
     drag(rowRef)
   }
 
-  const rowHtmlProps = dragStatus
-    ? getDnDHtmlStatusProps(
-        {
-          canDrop,
-          isOver,
-          isDragging,
-          isCurrentDragSource
-        },
-        dragStatus
-      )
-    : {}
+  const rowHtmlProps = getDnDHtmlStatusProps(
+    {
+      canDrop,
+      isOver,
+      isDragging,
+      isCurrentDragSource
+    },
+    dndStatusProps
+  )
   return <tr {...additionalHtmlProps} {...rowHtmlProps} ref={rowRef} />
 }
 

@@ -37,7 +37,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     onDeleteItems,
     onSelectionChange,
     antdTableProps = {},
-    dragStatus = {},
+    itemDndStatusProps = {},
     hideNativeDragPreview,
     ...restProps
   } = props
@@ -62,7 +62,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   ): DnDTableRowProps<FileManagerDragSource<T>> => {
     return {
       enableDrop: item.type === 'directory',
-      dragStatus: props.dragStatus,
+      dndStatusProps: props.itemDndStatusProps,
       hideNativeDragPreview,
       canDropItem: source => canDropOnItem(source, item),
       onDropItem: source => {
@@ -181,7 +181,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
           props.onDropFiles(source.items)
         }}
         hideNativeDragPreview={hideNativeDragPreview}
-        dragStatus={props.rootDragStatusProps}
+        dndStatusProps={props.rootDndStatusProps}
       />
     )
   }

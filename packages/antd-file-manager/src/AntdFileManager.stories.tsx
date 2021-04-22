@@ -81,7 +81,7 @@ Basic.args = {
   canDropFiles: (_, target) => {
     return target.type === 'directory'
   },
-  dragStatus: {
+  itemDndStatusProps: {
     invalidDropTargetProps: {
       style: {
         opacity: 0.3
@@ -95,7 +95,7 @@ Basic.args = {
       }
     }
   },
-  rootDragStatusProps: {
+  rootDndStatusProps: {
     validDropTargetOverProps: {
       style: {
         position: 'relative',

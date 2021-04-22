@@ -20,6 +20,11 @@ export const getDnDHtmlStatusProps = <ElementType extends HTMLElement>(
   props: DnDStatusProps<ElementType>
 ): React.HTMLProps<ElementType> => {
   const { isDragging, isCurrentDragSource, canDrop, isOver } = status
+  // don't do anything if we are not dragging or there are no props specified
+  if (!isDragging || Object.keys(props).length === 0) {
+    return {}
+  }
+
   const {
     activeDragSourceProps,
     invalidDropTargetOverProps,
@@ -28,10 +33,6 @@ export const getDnDHtmlStatusProps = <ElementType extends HTMLElement>(
     validDropTargetProps
   } = props
   let rowHtmlProps = {}
-  if (!isDragging) {
-    return {}
-  }
-
   if (canDrop) {
     // valid drop target
     rowHtmlProps = {
