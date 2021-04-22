@@ -1,29 +1,58 @@
 import { FileTextFilled } from '@ant-design/icons'
 import { Badge } from 'antd'
-import React, { useCallback } from 'react'
+import React, { HTMLProps, useCallback } from 'react'
 import { FileManagerNode, isFileDrag } from '@codefreak/react-file-manager'
 import { DragLayerMonitor, useDragLayer } from 'react-dnd'
 import { AntdDragLayerProps } from './interfaces'
 
+/**
+ * Function that calculates the position of the cursor relative to an element
+ */
+const calculateRelativeDragLayerTransform = (
+  monitor: DragLayerMonitor,
+  element: Element | null
+) => {
+  // position of the element relative to body
+  const wrapperBoundingRect = element?.getBoundingClientRect()
+  // position of the cursor relative to body
+  const cursorOffset = monitor.getClientOffset()
+  const wrapperX = wrapperBoundingRect?.x || 0
+  const wrapperY = wrapperBoundingRect?.y || 0
+  const cursorX = cursorOffset?.x || 0
+  const cursorY = cursorOffset?.y || 0
+  // position of the cursor relative to element
+  return {
+    x: cursorX - wrapperX,
+    y: cursorY - wrapperY
+  }
+}
+
 const AntdDragLayer = <T extends FileManagerNode>(
   props: AntdDragLayerProps
 ): React.ReactElement | null => {
-  const { scrollingElement = { current: document.scrollingElement } } = props
+  const {
+    relativeToElement = { current: document.scrollingElement },
+    additionalStyle = {}
+  } = props
+  const positionCalculator = useCallback(
+    monitor => {
+      return calculateRelativeDragLayerTransform(
+        monitor,
+        relativeToElement.current
+      )
+    },
+    [relativeToElement]
+  )
   const collector = useCallback(
     (monitor: DragLayerMonitor) => {
-      const clientOffset = monitor.getClientOffset()
-      const x =
-        (clientOffset?.x || 0) + (scrollingElement.current?.scrollLeft || 0)
-      const y =
-        (clientOffset?.y || 0) + (scrollingElement.current?.scrollTop || 0)
-
+      const { x, y } = positionCalculator(monitor)
       return {
         isDragging: monitor.isDragging(),
         item: monitor.getItem(),
         transform: `translate(${x}px, ${y}px)`
       }
     },
-    [scrollingElement]
+    [positionCalculator]
   )
   const { isDragging, transform, item } = useDragLayer(collector)
   // Browsers render a default file icon with (+) when dragging a file
@@ -42,20 +71,17 @@ const AntdDragLayer = <T extends FileManagerNode>(
       </Badge>
     )
   }
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        transform,
-        zIndex: 999,
-        pointerEvents: 'none'
-      }}
-    >
-      {dragContent}
-    </div>
-  )
+
+  const style: HTMLProps<HTMLDivElement>['style'] = {
+    transform,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    zIndex: 999,
+    pointerEvents: 'none',
+    ...additionalStyle
+  }
+  return <div style={style}>{dragContent}</div>
 }
 
 export default AntdDragLayer

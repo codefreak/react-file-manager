@@ -7,10 +7,8 @@ import {
 import React from 'react'
 
 export interface AntdDragLayerProps {
-  scrollingElement?: React.RefObject<{
-    scrollLeft: number
-    scrollTop: number
-  }>
+  relativeToElement?: React.RefObject<Element>
+  additionalStyle?: React.HTMLProps<HTMLDivElement>['style']
 }
 
 export interface AntdTableRendererProps<T extends FileManagerNode>
