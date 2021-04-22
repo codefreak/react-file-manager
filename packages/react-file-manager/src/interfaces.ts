@@ -48,12 +48,13 @@ export interface DnDStatusProps<ElementType extends HTMLElement = HTMLElement> {
 }
 
 export interface DnDTableProps extends HTMLProps<HTMLTableElement> {
+  canDropItem: DropTargetHookSpec<FileDropItem, unknown, unknown>['canDrop']
   onDropItem: DropTargetHookSpec<FileDropItem, unknown, unknown>['drop']
   dndStatusProps?: DnDStatusProps<HTMLTableElement>
-  hideNativeDragPreview: boolean
 }
 
 export interface DnDTableRowProps<T> extends HTMLProps<HTMLTableRowElement> {
+  acceptFiles: boolean
   canDropItem: DropTargetHookSpec<T, unknown, unknown>['canDrop']
   onDropItem: DropTargetHookSpec<T, unknown, unknown>['drop']
   onDragOverItem: DropTargetHookSpec<T, unknown, unknown>['hover']
@@ -67,6 +68,7 @@ export interface DnDTableRowProps<T> extends HTMLProps<HTMLTableRowElement> {
 export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   dataSource: RecordType[]
   dataKey: string
+  acceptFiles: boolean
   onSelectionChange: (selectedItems: RecordType[]) => void
   onDragStartItem?: (source: RecordType) => FileManagerDragSource<RecordType> | null
   onDragEndItem?: (source: FileManagerDragSource<RecordType>) => void
@@ -75,7 +77,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
     target: RecordType,
     dragSourceMonitor: DropTargetMonitor<RecordType>
   ) => void
-  canDropItem: (source: FileManagerDragSource<RecordType>, target: RecordType) => boolean
+  canDropItem: (source: FileManagerDragSource<RecordType>, target?: RecordType) => boolean
   onDropItem: (source: FileManagerDragSource<RecordType>, target?: RecordType) => void
   onDeleteItems?: (item: RecordType[]) => void
   onRenameItem?: (item: RecordType, newName: string) => void
@@ -111,7 +113,7 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   onDropItems?: (source: RecordType[], target: RecordType) => void
   canDropFiles?:
     | boolean
-    | ((dataTransferItems: DataTransferItemList, target: RecordType) => boolean)
+    | ((dataTransferItems: DataTransferItemList, target?: RecordType) => boolean)
   onDropFiles?: (
     dataTransferItems: DataTransferItemList,
     target?: RecordType

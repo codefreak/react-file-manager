@@ -40,6 +40,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     itemDndStatusProps = {},
     canDropItem,
     onDropItem,
+    acceptFiles,
     ...restProps
   } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
@@ -53,6 +54,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   ): DnDTableRowProps<FileManagerDragSource<T>> => {
     return {
       enableDrop: item.type === 'directory',
+      acceptFiles,
       dndStatusProps: props.itemDndStatusProps,
       hideNativeDragPreview: true, // we render a custom drag layer in this component
       canDropItem: source => canDropItem(source, item),
@@ -164,13 +166,12 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   }
 
   const ConnectedDnDTable = (tableProps: HTMLProps<HTMLTableElement>) => {
+    if (!acceptFiles) return <table {...tableProps} />
     return (
       <DnDTable
         {...tableProps}
-        onDropItem={source => {
-          props.onDropItem(source)
-        }}
-        hideNativeDragPreview
+        onDropItem={source => onDropItem(source)}
+        canDropItem={source => canDropItem(source)}
         dndStatusProps={props.rootDndStatusProps}
       />
     )
@@ -195,13 +196,6 @@ const AntdTableRenderer = <T extends FileManagerNode>(
         onRow={getAdditionalRowProps}
         dataSource={dataSource}
         rowKey={dataKey}
-      />
-      <Modal
-        visible={deletingNodes !== undefined}
-        onOk={onDeleteModalOkay}
-        onCancel={() => setDeletingNodes(undefined)}
-        title={`Really delete ${deletingNodes?.length} file(s)?`}
-        okButtonProps={{ danger: true }}
       />
     </>
   )

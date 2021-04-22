@@ -6,8 +6,8 @@ import { DnDTableProps, FileDropItem } from './interfaces'
 
 const DnDTable = (props: DnDTableProps) => {
   const {
+    canDropItem,
     onDropItem,
-    hideNativeDragPreview,
     dndStatusProps = {},
     ...tableProps
   } = props
@@ -23,6 +23,7 @@ const DnDTable = (props: DnDTableProps) => {
         onDropItem?.(source, targetMonitor)
       }
     },
+    canDrop: canDropItem,
     collect: monitor => ({
       isOver: monitor.isOver({ shallow: true }),
       canDrop: monitor.canDrop(),

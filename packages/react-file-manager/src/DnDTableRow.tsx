@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { DnDTableRowProps, FileManagerItemDragType } from './interfaces'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
@@ -16,15 +16,23 @@ export const DnDTableRow = <T extends DefaultRecordType>(
     onDragEndItem,
     hideNativeDragPreview,
     dndStatusProps = {},
+    acceptFiles,
     enableDrop,
     ...additionalHtmlProps
   } = props
+  const accept = useMemo(() => {
+    if (acceptFiles) {
+      return [FileManagerItemDragType, NativeTypes.FILE]
+    } else {
+      return [FileManagerItemDragType]
+    }
+  }, [acceptFiles])
   const [{ isOver, isDragging, canDrop }, drop] = useDrop<
     T,
     unknown,
     { isOver: boolean; canDrop: boolean; isDragging: boolean }
   >({
-    accept: [FileManagerItemDragType, NativeTypes.FILE],
+    accept,
     drop: onDropItem,
     canDrop: canDropItem,
     hover: onDragOverItem,

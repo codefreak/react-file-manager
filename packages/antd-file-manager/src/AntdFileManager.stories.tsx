@@ -8,6 +8,19 @@ import sampleTableData, { DummyNode } from './data.example'
 
 import 'antd/dist/antd.css'
 
+const getNonDirItems = (items: DataTransferItemList): DataTransferItem[] => {
+  const nonDirItems = []
+  for (let i = 0; i < items.length; i++) {
+    const entry = items[i].webkitGetAsEntry()
+    // looks like entry is null while we are still dragging so we cannot say
+    // 100% if entry is a dir or not
+    if (entry === null || entry.isFile) {
+      nonDirItems.push(items[i])
+    }
+  }
+  return nonDirItems
+}
+
 const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
     onDropFiles: originalOnDropFiles,
@@ -46,17 +59,15 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
 
   const onDropFiles: typeof originalOnDropFiles = (dataTransfer, target) => {
     if (target === undefined) {
-      const addFiles: DummyNode[] = []
-      for (let i = 0; i < dataTransfer.length; i++) {
-        const file = dataTransfer[i].getAsFile()
-        if (!file) continue
-        addFiles.push({
+      const addFiles: DummyNode[] = getNonDirItems(dataTransfer)
+        .map(item => item.getAsFile())
+        .filter((item): item is File => item !== null)
+        .map(file => ({
           path: file.name,
           type: 'file',
           mode: '100777',
           size: file.size
-        })
-      }
+        }))
       setFiles([...addFiles, ...files])
     }
     if (originalOnDropFiles) {
@@ -78,8 +89,9 @@ export const Basic = AntdFileManagerStory.bind({})
 Basic.args = {
   dataSource: sampleTableData,
   dataKey: 'path',
-  canDropFiles: (_, target) => {
-    return target.type === 'directory'
+  canDropFiles: (items, target) => {
+    if (target !== undefined && target.type !== 'directory') return false
+    return getNonDirItems(items).length > 0
   },
   itemDndStatusProps: {
     invalidDropTargetProps: {
