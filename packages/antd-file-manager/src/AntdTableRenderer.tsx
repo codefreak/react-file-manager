@@ -14,11 +14,11 @@ import {
   DnDTableRowProps,
   FileManagerDragSource,
   FileManagerItemDragType,
-  FileManagerNode,
-  isFileDrag
+  FileManagerNode
 } from '@codefreak/react-file-manager'
 import EditableValue from './EditableValue'
 import { AntdTableRendererProps } from './interfaces'
+import { AntdDragLayer } from './index'
 
 const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
   if (node.type === 'directory') {
@@ -38,23 +38,14 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     onSelectionChange,
     antdTableProps = {},
     itemDndStatusProps = {},
-    hideNativeDragPreview,
+    canDropItem,
+    onDropItem,
     ...restProps
   } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
   const [deletingNodes, setDeletingNodes] = useState<T[] | undefined>()
-  const endDrag = (node: T) => {
-    props.onDragEndItem?.(node)
-  }
-
-  const canDropOnItem = (source: FileManagerDragSource<T>, target: T) => {
-    if (isFileDrag(source)) {
-      if (typeof props.canDropFiles !== 'function') return !!props.canDropFiles
-      return props.canDropFiles(source.items, target)
-    } else {
-      if (typeof props.canDropItem !== 'function') return !!props.canDropItem
-      return props.canDropItem?.(source.item, target)
-    }
+  const endDrag = (source: FileManagerDragSource<T>) => {
+    props.onDragEndItem?.(source)
   }
 
   const getAdditionalRowProps = (
@@ -63,26 +54,25 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     return {
       enableDrop: item.type === 'directory',
       dndStatusProps: props.itemDndStatusProps,
-      hideNativeDragPreview,
-      canDropItem: source => canDropOnItem(source, item),
+      hideNativeDragPreview: true, // we render a custom drag layer in this component
+      canDropItem: source => canDropItem(source, item),
       onDropItem: source => {
-        if (isFileDrag(source)) {
-          props.onDropFiles(source.items, item)
-        } else {
-          props.onDropItem(source.item, item)
-        }
+        onDropItem(source, item)
+        endDrag(source)
       },
       onDragStartItem: source => {
-        props.onDragStartItem?.(item)
-        return {
-          item,
-          type: FileManagerItemDragType
-        }
+        // either let callback define a drag source or create a default one based on the current item
+        return (
+          props.onDragStartItem?.(item) || {
+            items: [item],
+            type: FileManagerItemDragType
+          }
+        )
       },
       onDragOverItem: (source, dropTargetMonitor) => {
         props.onDragOverItem?.(source, item, dropTargetMonitor)
       },
-      onDragEndItem: () => endDrag(item)
+      onDragEndItem: source => endDrag(source)
     }
   }
 
@@ -178,9 +168,9 @@ const AntdTableRenderer = <T extends FileManagerNode>(
       <DnDTable
         {...tableProps}
         onDropItem={source => {
-          props.onDropFiles(source.items)
+          props.onDropItem(source)
         }}
-        hideNativeDragPreview={hideNativeDragPreview}
+        hideNativeDragPreview
         dndStatusProps={props.rootDndStatusProps}
       />
     )
@@ -188,6 +178,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
 
   return (
     <>
+      <AntdDragLayer />
       <AntdTable
         {...restProps}
         size="middle"

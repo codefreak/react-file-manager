@@ -1,11 +1,12 @@
 import React, { PropsWithChildren, useState } from 'react'
 import {
+  FileManagerItemDragType,
   FileManagerNode,
   FileManagerProps,
   FileManagerRenderComponent,
   FileManagerRendererProps
 } from './interfaces'
-import { isMultiMove } from './utils'
+import { isFileDrag, isMultiMove } from './utils'
 
 const FileManager = <T extends FileManagerNode>(
   props: PropsWithChildren<FileManagerProps<T>>
@@ -17,12 +18,11 @@ const FileManager = <T extends FileManagerNode>(
     source,
     target
   ) => {
+    // TODO: invoke props.canDropItems()
     // only ever allow moves/drops to directories and never on dir itself
-    if (target.type !== 'directory' || target === source) return false
-    // only allow multi drop to directory if it's not contained in dragged items
     return (
-      !isMultiMove(selectedItems, source) ||
-      selectedItems.indexOf(target) === -1
+      target.type === 'directory' &&
+      (isFileDrag(source) || !source.items.includes(target))
     )
   }
 
@@ -30,51 +30,38 @@ const FileManager = <T extends FileManagerNode>(
     source,
     target
   ) => {
-    if (isMultiMove(selectedItems, source)) {
-      const sources = data.filter(i => selectedItems.indexOf(i) !== -1)
-      props.onDropItems?.(sources, target)
+    if (isFileDrag(source)) {
+      props.onDropFiles?.(source.items, target)
     } else {
-      props.onDropItems?.([source], target)
+      if (target !== undefined) {
+        props.onDropItems?.(source.items, target)
+      } else {
+        throw 'Expected a valid drop target'
+      }
     }
   }
 
-  const onDropFiles: FileManagerRendererProps<T>['onDropFiles'] = (
-    dataTransfer,
-    target
-  ) => {
-    if (!props.onDropFiles) return
-    props.onDropFiles(dataTransfer, target)
-  }
-
-  const renderCustomDragLayer = () => {
-    const CustomDragLayer = props.customDragLayer?.component
-    if (CustomDragLayer === undefined) return null
-    return (
-      <CustomDragLayer
-        draggedItems={selectedItems}
-        scrollingElement={
-          props.customDragLayer?.scrollingElement || {
-            current: document.scrollingElement
-          }
-        }
-      />
-    )
+  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = item => {
+    if (isMultiMove(selectedItems, item)) {
+      return {
+        type: FileManagerItemDragType,
+        items: [...selectedItems]
+      }
+    }
+    return null // use original drag source
   }
 
   const RenderComponent: FileManagerRenderComponent<T> = props.renderer
+  // TODO: hideNativeDragPreview by argument
   return (
-    <>
-      {renderCustomDragLayer()}
-      <RenderComponent
-        {...props}
-        hideNativeDragPreview={props.customDragLayer !== undefined}
-        onSelectionChange={items => setSelectedItems(items)}
-        canDropFiles={props.canDropFiles || props.onDropFiles !== undefined}
-        onDropFiles={onDropFiles}
-        onDropItem={onDropItem}
-        canDropItem={canDropItem}
-      />
-    </>
+    <RenderComponent
+      {...props}
+      hideNativeDragPreview={props.hideNativeDragPreview || false}
+      onSelectionChange={items => setSelectedItems(items)}
+      onDragStartItem={onDragStart}
+      onDropItem={onDropItem}
+      canDropItem={canDropItem}
+    />
   )
 }
 

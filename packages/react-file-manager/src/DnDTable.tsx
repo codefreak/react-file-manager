@@ -5,7 +5,12 @@ import { getDnDHtmlStatusProps } from './utils'
 import { DnDTableProps, FileDropItem } from './interfaces'
 
 const DnDTable = (props: DnDTableProps) => {
-  const { dndStatusProps = {} } = props
+  const {
+    onDropItem,
+    hideNativeDragPreview,
+    dndStatusProps = {},
+    ...tableProps
+  } = props
   const tableRef = useRef<HTMLTableElement>(null)
   const [{ isOver, isDragging, canDrop }, drop] = useDrop<
     FileDropItem,
@@ -15,7 +20,7 @@ const DnDTable = (props: DnDTableProps) => {
     accept: [NativeTypes.FILE],
     drop: (source, targetMonitor) => {
       if (!targetMonitor.didDrop()) {
-        props.onDropItem?.(source, targetMonitor)
+        onDropItem?.(source, targetMonitor)
       }
     },
     collect: monitor => ({
@@ -34,7 +39,7 @@ const DnDTable = (props: DnDTableProps) => {
     },
     dndStatusProps
   )
-  return <table {...props} {...rootStatusProps} ref={tableRef} />
+  return <table {...tableProps} {...rootStatusProps} ref={tableRef} />
 }
 
 export default DnDTable

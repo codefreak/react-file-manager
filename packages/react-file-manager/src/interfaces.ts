@@ -34,7 +34,7 @@ export interface DnDStatus {
 
 export const FileManagerItemDragType = 'REACT_FILE_MANAGER_ITEM'
 export interface FileManagerItemDrag<T> {
-  item: T
+  items: T[]
   type: typeof FileManagerItemDragType
 }
 export type FileManagerDragSource<T> = FileManagerItemDrag<T> | FileDropItem
@@ -68,22 +68,15 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   dataSource: RecordType[]
   dataKey: string
   onSelectionChange: (selectedItems: RecordType[]) => void
-  onDragStartItem?: (item: RecordType) => void
-  onDragEndItem?: (item: RecordType) => void
+  onDragStartItem?: (source: RecordType) => FileManagerDragSource<RecordType> | null
+  onDragEndItem?: (source: FileManagerDragSource<RecordType>) => void
   onDragOverItem?: (
     source: FileManagerDragSource<RecordType>,
     target: RecordType,
     dragSourceMonitor: DropTargetMonitor<RecordType>
   ) => void
-  canDropItem: boolean | ((source: RecordType, target: RecordType) => boolean)
-  onDropItem: (source: RecordType, target: RecordType) => void
-  canDropFiles:
-    | boolean
-    | ((dataTransferItems: DataTransferItemList, target: RecordType) => boolean)
-  onDropFiles: (
-    dataTransferItems: DataTransferItemList,
-    target?: RecordType
-  ) => void
+  canDropItem: (source: FileManagerDragSource<RecordType>, target: RecordType) => boolean
+  onDropItem: (source: FileManagerDragSource<RecordType>, target?: RecordType) => void
   onDeleteItems?: (item: RecordType[]) => void
   onRenameItem?: (item: RecordType, newName: string) => void
   // TODO: valid prop types instead of unknown
@@ -97,21 +90,6 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
 export type FileManagerRenderComponent<
   RecordType extends FileManagerNode
 > = React.ComponentType<FileManagerRendererProps<RecordType>>
-
-export interface FileManagerCustomDragLayerProps<
-  RecordType extends FileManagerNode
-> {
-  draggedItems?: RecordType[]
-  draggedFiles?: DataTransferItemList
-  scrollingElement: React.RefObject<{
-    scrollLeft: number
-    scrollTop: number
-  }>
-}
-
-export type FileManagerCustomDragLayerRenderer<
-  RecordType extends FileManagerNode
-> = React.ComponentType<FileManagerCustomDragLayerProps<RecordType>>
 
 /**
  * High-Level props for all kind of file managers.
@@ -127,10 +105,6 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   | 'onSelectionChange'
 > & {
   renderer: FileManagerRenderComponent<RecordType>
-  customDragLayer?: {
-    component: FileManagerCustomDragLayerRenderer<RecordType>
-    scrollingElement?: FileManagerCustomDragLayerProps<RecordType>['scrollingElement']
-  }
   canDropItems?:
     | boolean
     | ((sources: RecordType[], target: RecordType) => boolean)
@@ -142,4 +116,5 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
     dataTransferItems: DataTransferItemList,
     target?: RecordType
   ) => void
+  hideNativeDragPreview?: boolean
 }

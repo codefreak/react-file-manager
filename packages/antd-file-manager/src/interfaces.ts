@@ -6,6 +6,13 @@ import {
 } from '@codefreak/react-file-manager'
 import React from 'react'
 
+export interface AntdDragLayerProps {
+  scrollingElement?: React.RefObject<{
+    scrollLeft: number
+    scrollTop: number
+  }>
+}
+
 export interface AntdTableRendererProps<T extends FileManagerNode>
   extends FileManagerRendererProps<T> {
   antdTableProps?: Partial<AntdTableProps<T>>

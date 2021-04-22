@@ -1,16 +1,14 @@
 import { FileTextFilled } from '@ant-design/icons'
 import { Badge } from 'antd'
 import React, { useCallback } from 'react'
-import {
-  FileManagerCustomDragLayerProps,
-  FileManagerNode
-} from '@codefreak/react-file-manager'
+import { FileManagerNode, isFileDrag } from '@codefreak/react-file-manager'
 import { DragLayerMonitor, useDragLayer } from 'react-dnd'
+import { AntdDragLayerProps } from './interfaces'
 
 const AntdDragLayer = <T extends FileManagerNode>(
-  props: FileManagerCustomDragLayerProps<T>
+  props: AntdDragLayerProps
 ): React.ReactElement | null => {
-  const { scrollingElement, draggedItems } = props
+  const { scrollingElement = { current: document.scrollingElement } } = props
   const collector = useCallback(
     (monitor: DragLayerMonitor) => {
       const clientOffset = monitor.getClientOffset()
@@ -21,18 +19,20 @@ const AntdDragLayer = <T extends FileManagerNode>(
 
       return {
         isDragging: monitor.isDragging(),
+        item: monitor.getItem(),
         transform: `translate(${x}px, ${y}px)`
       }
     },
     [scrollingElement]
   )
-  const { isDragging, transform } = useDragLayer(collector)
+  const { isDragging, transform, item } = useDragLayer(collector)
   // Browsers render a default file icon with (+) when dragging a file
   // over a droppable area. I think this cannot be removed...?
-  if (!isDragging || draggedItems === undefined) {
+  if (!isDragging || isFileDrag(item)) {
     return null
   }
 
+  const draggedItems = item.items
   let dragContent = <FileTextFilled style={{ fontSize: '1.5em' }} />
   // wrap in badge if multiple items are dragged or about to drop files
   if (draggedItems.length > 1) {
