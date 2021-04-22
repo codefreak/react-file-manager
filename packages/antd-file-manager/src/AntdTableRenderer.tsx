@@ -1,11 +1,6 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FileTextFilled,
-  FolderFilled
-} from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, FileTextFilled, FolderFilled } from '@ant-design/icons'
 import React, { HTMLProps, useState } from 'react'
-import { Button, Modal, Table as AntdTable } from 'antd'
+import { Button, Table as AntdTable } from 'antd'
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
   basename,
@@ -18,7 +13,6 @@ import {
 } from '@codefreak/react-file-manager'
 import EditableValue from './EditableValue'
 import { AntdTableRendererProps } from './interfaces'
-import { AntdDragLayer } from './index'
 
 const antdIconRenderer = <T extends FileManagerNode>(_: unknown, node: T) => {
   if (node.type === 'directory') {
@@ -41,10 +35,10 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     canDropItem,
     onDropItem,
     acceptFiles,
+    hideNativeDragPreview,
     ...restProps
   } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
-  const [deletingNodes, setDeletingNodes] = useState<T[] | undefined>()
   const endDrag = (source: FileManagerDragSource<T>) => {
     props.onDragEndItem?.(source)
   }
@@ -56,7 +50,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
       enableDrop: item.type === 'directory',
       acceptFiles,
       dndStatusProps: props.itemDndStatusProps,
-      hideNativeDragPreview: true, // we render a custom drag layer in this component
+      hideNativeDragPreview, // we render a custom drag layer in this component
       canDropItem: source => canDropItem(source, item),
       onDropItem: source => {
         onDropItem(source, item)
@@ -81,7 +75,7 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   const renderActions = (_: unknown, node: T) => {
     const buttons = []
     if (onDeleteItems) {
-      const onDeleteClick = (): void => setDeletingNodes([node])
+      const onDeleteClick = () => onDeleteItems([node])
       buttons.push(
         <Button
           key="delete"
@@ -151,13 +145,6 @@ const AntdTableRenderer = <T extends FileManagerNode>(
     }
   ]
 
-  const onDeleteModalOkay = () => {
-    if (deletingNodes !== undefined) {
-      onDeleteItems?.(deletingNodes)
-      setDeletingNodes(undefined)
-    }
-  }
-
   const rowSelection: AntdTableProps<T>['rowSelection'] = {
     type: 'checkbox',
     onChange: (_, items) => {
@@ -178,26 +165,23 @@ const AntdTableRenderer = <T extends FileManagerNode>(
   }
 
   return (
-    <>
-      <AntdDragLayer />
-      <AntdTable
-        {...restProps}
-        size="middle"
-        columns={columns}
-        pagination={false}
-        rowSelection={rowSelection}
-        {...antdTableProps}
-        components={{
-          table: ConnectedDnDTable,
-          body: {
-            row: DnDTableRow
-          }
-        }}
-        onRow={getAdditionalRowProps}
-        dataSource={dataSource}
-        rowKey={dataKey}
-      />
-    </>
+    <AntdTable
+      {...restProps}
+      size="middle"
+      columns={columns}
+      pagination={false}
+      rowSelection={rowSelection}
+      {...antdTableProps}
+      components={{
+        table: ConnectedDnDTable,
+        body: {
+          row: DnDTableRow
+        }
+      }}
+      onRow={getAdditionalRowProps}
+      dataSource={dataSource}
+      rowKey={dataKey}
+    />
   )
 }
 

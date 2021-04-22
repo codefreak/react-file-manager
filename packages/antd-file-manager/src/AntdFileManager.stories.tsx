@@ -161,6 +161,7 @@ export const AntdCustomDragLayer = () => {
       <AntdFileManager
         dataSource={sampleTableData}
         dataKey="path"
+        hideNativeDragPreview
         onSelectionChange={setSelectedNodes}
       />
     </>
