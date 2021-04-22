@@ -42,6 +42,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     onDropItem,
     acceptFiles,
     hideNativeDragPreview,
+    additionalRowProperties,
     ...restProps
   } = props
   const [renamingNode, setRenamingNode] = useState<T | undefined>()
@@ -52,7 +53,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
   const getAdditionalRowProps = (
     item: T
   ): DnDTableRowProps<FileManagerDragSource<T>> => {
-    return {
+    const rowProps: DnDTableRowProps<FileManagerDragSource<T>> = {
       enableDrop: item.type === 'directory',
       acceptFiles,
       dndStatusProps: props.itemDndStatusProps,
@@ -77,6 +78,12 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       onDragEndItem: source => endDrag(source),
       onClick: e => props.onClickItem?.(item, e),
       onDoubleClick: e => props.onDoubleClickItem?.(item, e)
+    }
+
+    if (additionalRowProperties) {
+      return additionalRowProperties(item, rowProps)
+    } else {
+      return rowProps
     }
   }
 

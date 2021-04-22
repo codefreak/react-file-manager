@@ -1,10 +1,12 @@
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
+  DnDTableRowProps,
+  FileManagerDragSource,
   FileManagerNode,
   FileManagerProps,
   FileManagerRendererProps
 } from '@codefreak/react-file-manager'
-import React from 'react'
+import React, { HTMLProps } from 'react'
 
 export interface AntdFileManagerNode extends FileManagerNode {
   /**
@@ -28,6 +30,10 @@ export interface AntdTableRendererProps<T extends AntdFileManagerNode>
     node: T,
     defaultActions: React.ReactNode[]
   ) => React.ReactNode
+  additionalRowProperties?: (
+    item: T,
+    currentProps: DnDTableRowProps<FileManagerDragSource<T>>
+  ) => DnDTableRowProps<FileManagerDragSource<T>>
 }
 
 export type AntdFileManagerProps<T extends AntdFileManagerNode> = Omit<
@@ -36,7 +42,12 @@ export type AntdFileManagerProps<T extends AntdFileManagerNode> = Omit<
 > &
   Pick<
     AntdTableRendererProps<T>,
-    'onDeleteItems' | 'additionalColumns' | 'antdTableProps' | 'onRenameItem'
+    | 'renderActions'
+    | 'onDeleteItems'
+    | 'additionalColumns'
+    | 'antdTableProps'
+    | 'onRenameItem'
+    | 'additionalRowProperties'
   > & {
     renderType?: 'table'
     antdTableProps?: Partial<AntdTableProps<T>>
