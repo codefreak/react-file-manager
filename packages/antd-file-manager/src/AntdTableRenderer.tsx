@@ -1,4 +1,9 @@
-import { DeleteOutlined, EditOutlined, FileTextFilled, FolderFilled } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FileTextFilled,
+  FolderFilled
+} from '@ant-design/icons'
 import React, { HTMLProps, useState } from 'react'
 import { Button, Table as AntdTable } from 'antd'
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
@@ -68,7 +73,9 @@ const AntdTableRenderer = <T extends FileManagerNode>(
       onDragOverItem: (source, dropTargetMonitor) => {
         props.onDragOverItem?.(source, item, dropTargetMonitor)
       },
-      onDragEndItem: source => endDrag(source)
+      onDragEndItem: source => endDrag(source),
+      onClick: e => props.onClickItem?.(item, e),
+      onDoubleClick: e => props.onDoubleClickItem?.(item, e)
     }
   }
 
