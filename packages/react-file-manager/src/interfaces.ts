@@ -104,8 +104,8 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   | 'onDoubleClickItem'
   | 'itemDndStatusProps'
   | 'rootDndStatusProps'
-  | 'onSelectionChange'
 > & {
+  onSelectionChange?: (selectedItems: RecordType[]) => void
   renderer: FileManagerRenderComponent<RecordType>
   canDropItems?:
     | boolean

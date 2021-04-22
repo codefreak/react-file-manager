@@ -81,6 +81,11 @@ const FileManager = <T extends FileManagerNode>(
     return null // use original drag source
   }
 
+  const onSelectionChange = (items: T[]) => {
+    setSelectedItems(items)
+    props.onSelectionChange?.(items)
+  }
+
   const RenderComponent: FileManagerRenderComponent<T> = props.renderer
   // TODO: hideNativeDragPreview by argument
   return (
@@ -88,7 +93,7 @@ const FileManager = <T extends FileManagerNode>(
       {...props}
       acceptFiles={!!canDropFiles}
       hideNativeDragPreview={props.hideNativeDragPreview || false}
-      onSelectionChange={items => setSelectedItems(items)}
+      onSelectionChange={onSelectionChange}
       onDragStartItem={onDragStart}
       onDropItem={onDropItem}
       canDropItem={canDropItem}
