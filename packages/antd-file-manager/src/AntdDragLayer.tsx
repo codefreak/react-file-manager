@@ -1,7 +1,7 @@
 import { FileTextFilled } from '@ant-design/icons'
 import { Badge } from 'antd'
 import React, { HTMLProps, useCallback } from 'react'
-import { FileManagerNode, isFileDrag } from '@codefreak/react-file-manager'
+import { isFileDrag } from '@codefreak/react-file-manager'
 import { DragLayerMonitor, useDragLayer } from 'react-dnd'
 import { AntdDragLayerProps } from './interfaces'
 
@@ -27,20 +27,14 @@ const calculateRelativeDragLayerTransform = (
   }
 }
 
-const AntdDragLayer = <T extends FileManagerNode>(
-  props: AntdDragLayerProps
-): React.ReactElement | null => {
+const AntdDragLayer: React.FC<AntdDragLayerProps> = (props) => {
   const {
     relativeToElement = { current: document.scrollingElement },
     additionalStyle = {}
   } = props
   const positionCalculator = useCallback(
-    monitor => {
-      return calculateRelativeDragLayerTransform(
-        monitor,
-        relativeToElement.current
-      )
-    },
+    (monitor) =>
+      calculateRelativeDragLayerTransform(monitor, relativeToElement.current),
     [relativeToElement]
   )
   const collector = useCallback(

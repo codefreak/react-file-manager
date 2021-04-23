@@ -17,14 +17,17 @@ import { isFileDrag } from './utils'
 const defaultCanDropItems = <T extends FileManagerNode>(
   items: T[],
   target: T
-): boolean => {
-  return target.type === 'directory' && !items.includes(target)
-}
+): boolean => target.type === 'directory' && !items.includes(target)
 
 const FileManager = <T extends FileManagerNode>(
   props: FileManagerProps<T>
 ): React.ReactElement => {
-  const { canDropItems = defaultCanDropItems, canDropFiles = false } = props
+  const {
+    canDropItems = defaultCanDropItems,
+    canDropFiles = false,
+    renderer,
+    hideNativeDragPreview
+  } = props
   const [selectedItems, setSelectedItems] = useState<T[]>([])
 
   const canDropFilesOnTarget = (
@@ -46,13 +49,11 @@ const FileManager = <T extends FileManagerNode>(
   ) => {
     if (isFileDrag(source)) {
       return canDropFilesOnTarget(source.items, target)
-    } else {
-      if (target !== undefined) {
-        return canDropItemsOnTarget(source.items, target)
-      } else {
-        throw 'Expected a valid drop target'
-      }
     }
+    if (target === undefined) {
+      throw 'Expected a valid drop target'
+    }
+    return canDropItemsOnTarget(source.items, target)
   }
 
   const onDropItem: FileManagerRendererProps<T>['onDropItem'] = (
@@ -64,13 +65,14 @@ const FileManager = <T extends FileManagerNode>(
     } else {
       if (target !== undefined) {
         props.onDropItems?.(source.items, target)
-      } else {
-        throw 'Expected a valid drop target'
       }
+      throw 'Expected a valid drop target'
     }
   }
 
-  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = draggedItem => {
+  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = (
+    draggedItem
+  ) => {
     // if we are dragging multiple items create a new drag source with all selected items
     if (selectedItems.length > 1 && selectedItems.indexOf(draggedItem) !== -1) {
       return {
@@ -86,13 +88,13 @@ const FileManager = <T extends FileManagerNode>(
     props.onSelectionChange?.(items)
   }
 
-  const RenderComponent: FileManagerRenderComponent<T> = props.renderer
+  const RenderComponent: FileManagerRenderComponent<T> = renderer
   // TODO: hideNativeDragPreview by argument
   return (
     <RenderComponent
       {...props}
       acceptFiles={!!canDropFiles}
-      hideNativeDragPreview={props.hideNativeDragPreview || false}
+      hideNativeDragPreview={hideNativeDragPreview || false}
       onSelectionChange={onSelectionChange}
       onDragStartItem={onDragStart}
       onDropItem={onDropItem}

@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef } from 'react'
-import { DnDTableRowProps, FileManagerItemDragType } from './interfaces'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
-import { getDnDHtmlStatusProps } from './utils'
 import { DefaultRecordType } from 'rc-table/es/interface'
+import { DnDTableRowProps, FileManagerItemDragType } from './interfaces'
+import { getDnDHtmlStatusProps } from './utils'
 
 export const DnDTableRow = <T extends DefaultRecordType>(
   props: DnDTableRowProps<T>
@@ -23,9 +23,8 @@ export const DnDTableRow = <T extends DefaultRecordType>(
   const accept = useMemo(() => {
     if (acceptFiles) {
       return [FileManagerItemDragType, NativeTypes.FILE]
-    } else {
-      return [FileManagerItemDragType]
     }
+    return [FileManagerItemDragType]
   }, [acceptFiles])
   const [{ isOver, isDragging, canDrop }, drop] = useDrop<
     T,
@@ -36,7 +35,7 @@ export const DnDTableRow = <T extends DefaultRecordType>(
     drop: onDropItem,
     canDrop: canDropItem,
     hover: onDragOverItem,
-    collect: targetMonitor => ({
+    collect: (targetMonitor) => ({
       isOver: targetMonitor.isOver(),
       canDrop: targetMonitor.canDrop(),
       isDragging: !!targetMonitor.getItem()
@@ -50,7 +49,7 @@ export const DnDTableRow = <T extends DefaultRecordType>(
     item: onDragStartItem,
     type: FileManagerItemDragType,
     end: onDragEndItem,
-    collect: sourceMonitor => ({
+    collect: (sourceMonitor) => ({
       isCurrentDragSource: sourceMonitor.isDragging()
     })
   })

@@ -1,18 +1,11 @@
-import typescript from '@rollup/plugin-typescript'
+import baseConfig from '../../rollup-base.config'
 
 export default {
+  ...baseConfig,
   input: 'src/index.tsx',
-  output: {
-    dir: 'dist',
-    format: 'cjs',
-    exports: 'auto'
-  },
-  plugins: [
-    typescript({
-      exclude: 'src/**/*.stories.*'
-    })
-  ],
   external: [
-    'react'
+    ...baseConfig.external,
+    'react-dnd',
+    'react-dnd-html5-backend'
   ]
 }

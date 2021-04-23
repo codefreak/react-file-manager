@@ -5,12 +5,7 @@ import { getDnDHtmlStatusProps } from './utils'
 import { DnDTableProps, FileDropItem } from './interfaces'
 
 const DnDTable = (props: DnDTableProps) => {
-  const {
-    canDropItem,
-    onDropItem,
-    dndStatusProps = {},
-    ...tableProps
-  } = props
+  const { canDropItem, onDropItem, dndStatusProps = {}, ...tableProps } = props
   const tableRef = useRef<HTMLTableElement>(null)
   const [{ isOver, isDragging, canDrop }, drop] = useDrop<
     FileDropItem,
@@ -24,7 +19,7 @@ const DnDTable = (props: DnDTableProps) => {
       }
     },
     canDrop: canDropItem,
-    collect: monitor => ({
+    collect: (monitor) => ({
       isOver: monitor.isOver({ shallow: true }),
       canDrop: monitor.canDrop(),
       isDragging: !!monitor.getItem()

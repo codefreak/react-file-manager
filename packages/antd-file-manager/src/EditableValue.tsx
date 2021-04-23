@@ -17,7 +17,7 @@ export interface EditableValueProps {
  * @param props
  * @constructor
  */
-const EditableValue: React.FC<EditableValueProps> = props => {
+const EditableValue: React.FC<EditableValueProps> = (props) => {
   const { defaultValue, editing, onEditCancel, onEditStart, onChange } = props
   const [showEditIcon, setShowEditIcon] = useState<boolean>(false)
 
@@ -27,14 +27,14 @@ const EditableValue: React.FC<EditableValueProps> = props => {
         size="small"
         defaultValue={defaultValue}
         autoFocus
-        onFocus={e => {
+        onFocus={(e) => {
           e.target.select()
         }}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.key === 'Escape') {
             onEditCancel?.()
             setShowEditIcon(false)
-          } else if (e.key == 'Enter') {
+          } else if (e.key === 'Enter') {
             onChange?.(e.currentTarget.value)
             setShowEditIcon(false)
           }

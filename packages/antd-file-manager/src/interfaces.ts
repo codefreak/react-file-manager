@@ -6,7 +6,7 @@ import {
   FileManagerProps,
   FileManagerRendererProps
 } from '@codefreak/react-file-manager'
-import React, { HTMLProps } from 'react'
+import React from 'react'
 
 export interface AntdFileManagerNode extends FileManagerNode {
   /**

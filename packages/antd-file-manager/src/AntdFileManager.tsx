@@ -1,11 +1,13 @@
 import React from 'react'
-import FileManager from '@codefreak/react-file-manager'
+import FileManager, {
+  FileManagerRenderComponent
+} from '@codefreak/react-file-manager'
 import { AntdFileManagerNode, AntdFileManagerProps } from './interfaces'
 import AntdTableRenderer from './AntdTableRenderer'
 
 const getAntdRendererByName = <T extends AntdFileManagerNode>(
   name: 'table'
-) => {
+): FileManagerRenderComponent<T> => {
   if (name === 'table') {
     return AntdTableRenderer
   }

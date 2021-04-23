@@ -1,12 +1,12 @@
-module.exports = function (api) {
+module.exports = (api) => {
     api.cache(true)
     return {
-        "presets": [
-            ["@babel/preset-env", { "modules": false }],
-            "@babel/preset-react"
+        presets: [
+            ['@babel/preset-env', { modules: false }],
+            '@babel/preset-react'
         ],
-        "ignore": [
-            "node_modules/**"
+        ignore: [
+            'node_modules/**'
         ]
     }
 }

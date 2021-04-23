@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { Meta, Story } from '@storybook/react'
 import { useCallback, useState } from 'react'
-import AntdFileManager, { AntdFileManagerProps, AntdDragLayer } from './index'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import AntdFileManager, { AntdFileManagerProps, AntdDragLayer } from './index'
 import sampleTableData, { DummyNode } from './data.example'
 
 import 'antd/dist/antd.css'
@@ -21,7 +21,9 @@ const getNonDirItems = (items: DataTransferItemList): DataTransferItem[] => {
   return nonDirItems
 }
 
-const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
+const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = (
+  props
+) => {
   const {
     onDropFiles: originalOnDropFiles,
     onRenameItem: originalOnRename,
@@ -51,7 +53,7 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
 
   const onDelete = useCallback(
     (nodes: DummyNode[]) => {
-      setFiles(files.filter(file => !nodes.includes(file)))
+      setFiles(files.filter((file) => !nodes.includes(file)))
       originalOnDelete?.(nodes)
     },
     [files, setFiles, originalOnDelete]
@@ -60,9 +62,9 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
   const onDropFiles: typeof originalOnDropFiles = (dataTransfer, target) => {
     if (target === undefined) {
       const addFiles: DummyNode[] = getNonDirItems(dataTransfer)
-        .map(item => item.getAsFile())
+        .map((item) => item.getAsFile())
         .filter((item): item is File => item !== null)
-        .map(file => ({
+        .map((file) => ({
           path: file.name,
           basename: file.name,
           type: 'file',
@@ -152,27 +154,23 @@ Basic.argTypes = {
   onRowSelectionChange: { action: 'onRowSelectionChange' }
 }
 
-export const AntdCustomDragLayer = () => {
-  const [selectedNodes, setSelectedNodes] = useState<DummyNode[]>([])
-  return (
-    <>
-      <AntdDragLayer />
-      <AntdFileManager
-        dataSource={sampleTableData}
-        dataKey="path"
-        hideNativeDragPreview
-        onSelectionChange={setSelectedNodes}
-      />
-    </>
-  )
-}
+export const AntdCustomDragLayer = () => (
+  <>
+    <AntdDragLayer />
+    <AntdFileManager
+      dataSource={sampleTableData}
+      dataKey="path"
+      hideNativeDragPreview
+    />
+  </>
+)
 
 export default {
   title: 'AntD File Manager',
   decorators: [
-    Story => (
+    (InnerStory) => (
       <DndProvider backend={HTML5Backend}>
-        <Story />
+        <InnerStory />
       </DndProvider>
     )
   ]

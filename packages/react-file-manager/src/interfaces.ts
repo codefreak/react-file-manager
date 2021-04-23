@@ -70,15 +70,23 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   dataKey: string
   acceptFiles: boolean
   onSelectionChange: (selectedItems: RecordType[]) => void
-  onDragStartItem?: (source: RecordType) => FileManagerDragSource<RecordType> | null
+  onDragStartItem?: (
+    source: RecordType
+  ) => FileManagerDragSource<RecordType> | null
   onDragEndItem?: (source: FileManagerDragSource<RecordType>) => void
   onDragOverItem?: (
     source: FileManagerDragSource<RecordType>,
     target: RecordType,
     dragSourceMonitor: DropTargetMonitor<RecordType>
   ) => void
-  canDropItem: (source: FileManagerDragSource<RecordType>, target?: RecordType) => boolean
-  onDropItem: (source: FileManagerDragSource<RecordType>, target?: RecordType) => void
+  canDropItem: (
+    source: FileManagerDragSource<RecordType>,
+    target?: RecordType
+  ) => boolean
+  onDropItem: (
+    source: FileManagerDragSource<RecordType>,
+    target?: RecordType
+  ) => void
   onDeleteItems?: (item: RecordType[]) => void
   onRenameItem?: (item: RecordType, newName: string) => void
   // TODO: valid prop types instead of unknown
@@ -113,7 +121,10 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   onDropItems?: (source: RecordType[], target: RecordType) => void
   canDropFiles?:
     | boolean
-    | ((dataTransferItems: DataTransferItemList, target?: RecordType) => boolean)
+    | ((
+        dataTransferItems: DataTransferItemList,
+        target?: RecordType
+      ) => boolean)
   onDropFiles?: (
     dataTransferItems: DataTransferItemList,
     target?: RecordType

@@ -1,11 +1,8 @@
-import { DnDStatus, DnDStatusProps, FileDropItem } from './interfaces'
 import React from 'react'
+import { DnDStatus, DnDStatusProps, FileDropItem } from './interfaces'
 
-export const isFileDrag = (obj: unknown): obj is FileDropItem => {
-  return (
-    typeof obj === 'object' && obj !== null && 'items' in obj && 'files' in obj
-  )
-}
+export const isFileDrag = (obj: unknown): obj is FileDropItem =>
+  typeof obj === 'object' && obj !== null && 'items' in obj && 'files' in obj
 
 /**
  * Determine additional html props depending on the current d&d status for an individual item

@@ -38,6 +38,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     onSelectionChange,
     antdTableProps = {},
     itemDndStatusProps = {},
+    additionalColumns,
     canDropItem,
     onDropItem,
     acceptFiles,
@@ -56,15 +57,16 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     const rowProps: DnDTableRowProps<FileManagerDragSource<T>> = {
       enableDrop: item.type === 'directory',
       acceptFiles,
-      dndStatusProps: props.itemDndStatusProps,
+      dndStatusProps: itemDndStatusProps,
       hideNativeDragPreview, // we render a custom drag layer in this component
-      canDropItem: source => canDropItem(source, item),
-      onDropItem: source => {
+      canDropItem: (source) => canDropItem(source, item),
+      onDropItem: (source) => {
         onDropItem(source, item)
         endDrag(source)
       },
-      onDragStartItem: source => {
-        // either let callback define a drag source or create a default one based on the current item
+      onDragStartItem: () => {
+        // either let callback define a drag source or create
+        // a default one based on the current item
         return (
           props.onDragStartItem?.(item) || {
             items: [item],
@@ -75,16 +77,15 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       onDragOverItem: (source, dropTargetMonitor) => {
         props.onDragOverItem?.(source, item, dropTargetMonitor)
       },
-      onDragEndItem: source => endDrag(source),
-      onClick: e => props.onClickItem?.(item, e),
-      onDoubleClick: e => props.onDoubleClickItem?.(item, e)
+      onDragEndItem: (source) => endDrag(source),
+      onClick: (e) => props.onClickItem?.(item, e),
+      onDoubleClick: (e) => props.onDoubleClickItem?.(item, e)
     }
 
     if (additionalRowProperties) {
       return additionalRowProperties(item, rowProps)
-    } else {
-      return rowProps
     }
+    return rowProps
   }
 
   const renderActions = (_: unknown, node: T) => {
@@ -124,7 +125,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
         onEditCancel={() => setRenamingNode(undefined)}
         onEditStart={() => setRenamingNode(node)}
         editing={renamingNode === node}
-        onChange={newName => {
+        onChange={(newName) => {
           onRenameItem?.(node, newName)
         }}
       />
@@ -151,7 +152,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       render: renderNameColumn,
       shouldCellUpdate: () => false
     },
-    ...(props.additionalColumns || []),
+    ...(additionalColumns || []),
     {
       key: 'actions',
       render: renderActions,
@@ -172,8 +173,8 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     return (
       <DnDTable
         {...tableProps}
-        onDropItem={source => onDropItem(source)}
-        canDropItem={source => canDropItem(source)}
+        onDropItem={(source) => onDropItem(source)}
+        canDropItem={(source) => canDropItem(source)}
         dndStatusProps={props.rootDndStatusProps}
       />
     )
