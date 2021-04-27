@@ -12,7 +12,7 @@
     "@codefreak/prettier-config": "0.1.2",
     "@rollup/plugin-typescript": "8.2.1",
     "@storybook/addon-actions": "6.2.9",
-    "@storybook/addon-controls": "6.1.18",
+    "@storybook/addon-controls": "6.2.9",
     "@storybook/addon-essentials": "6.2.9",
     "@storybook/addon-links": "6.2.9",
     "@storybook/addons": "6.2.9",
