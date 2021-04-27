@@ -1,11 +1,9 @@
 import baseConfig from '../../rollup-base.config'
 
-export default {
+const rollupConfig = {
   ...baseConfig,
   input: 'src/index.tsx',
-  external: [
-    ...baseConfig.external,
-    'react-dnd',
-    'react-dnd-html5-backend'
-  ]
+  external: [...baseConfig.external, 'react-dnd', 'react-dnd-html5-backend']
 }
+
+export default rollupConfig

@@ -111,7 +111,7 @@ const dummyData = [
   { path: 'virt', type: 'directory', mode: '040000' }
 ]
 
-export default dummyData.map((dummyNode) => ({
+export default dummyData.map(dummyNode => ({
   basename: dummyNode.path,
   ...dummyNode
 })) as DummyNode[]

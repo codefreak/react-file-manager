@@ -1,10 +1,10 @@
-import React, { useRef } from 'react'
+import React, { ReactElement, useRef } from 'react'
 import { useDrop } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
 import { getDnDHtmlStatusProps } from './utils'
 import { DnDTableProps, FileDropItem } from './interfaces'
 
-const DnDTable = (props: DnDTableProps) => {
+const DnDTable = (props: DnDTableProps): ReactElement => {
   const { canDropItem, onDropItem, dndStatusProps = {}, ...tableProps } = props
   const tableRef = useRef<HTMLTableElement>(null)
   const [{ isOver, isDragging, canDrop }, drop] = useDrop<
@@ -19,7 +19,7 @@ const DnDTable = (props: DnDTableProps) => {
       }
     },
     canDrop: canDropItem,
-    collect: (monitor) => ({
+    collect: monitor => ({
       isOver: monitor.isOver({ shallow: true }),
       canDrop: monitor.canDrop(),
       isDragging: !!monitor.getItem()

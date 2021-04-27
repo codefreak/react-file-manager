@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import {
   FileManagerItemDragType,
   FileManagerNode,
@@ -21,7 +21,7 @@ const defaultCanDropItems = <T extends FileManagerNode>(
 
 const FileManager = <T extends FileManagerNode>(
   props: FileManagerProps<T>
-): React.ReactElement => {
+): ReactElement => {
   const {
     canDropItems = defaultCanDropItems,
     canDropFiles = false,
@@ -51,7 +51,7 @@ const FileManager = <T extends FileManagerNode>(
       return canDropFilesOnTarget(source.items, target)
     }
     if (target === undefined) {
-      throw 'Expected a valid drop target'
+      throw TypeError('Expected a valid drop target')
     }
     return canDropItemsOnTarget(source.items, target)
   }
@@ -63,16 +63,14 @@ const FileManager = <T extends FileManagerNode>(
     if (isFileDrag(source)) {
       props.onDropFiles?.(source.items, target)
     } else {
-      if (target !== undefined) {
-        props.onDropItems?.(source.items, target)
+      if (target === undefined) {
+        throw TypeError('Expected a valid drop target')
       }
-      throw 'Expected a valid drop target'
+      props.onDropItems?.(source.items, target)
     }
   }
 
-  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = (
-    draggedItem
-  ) => {
+  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = draggedItem => {
     // if we are dragging multiple items create a new drag source with all selected items
     if (selectedItems.length > 1 && selectedItems.indexOf(draggedItem) !== -1) {
       return {

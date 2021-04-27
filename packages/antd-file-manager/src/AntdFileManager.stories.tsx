@@ -21,9 +21,7 @@ const getNonDirItems = (items: DataTransferItemList): DataTransferItem[] => {
   return nonDirItems
 }
 
-const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = (
-  props
-) => {
+const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = props => {
   const {
     onDropFiles: originalOnDropFiles,
     onRenameItem: originalOnRename,
@@ -53,7 +51,7 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = (
 
   const onDelete = useCallback(
     (nodes: DummyNode[]) => {
-      setFiles(files.filter((file) => !nodes.includes(file)))
+      setFiles(files.filter(file => !nodes.includes(file)))
       originalOnDelete?.(nodes)
     },
     [files, setFiles, originalOnDelete]
@@ -62,9 +60,9 @@ const AntdFileManagerStory: Story<AntdFileManagerProps<DummyNode>> = (
   const onDropFiles: typeof originalOnDropFiles = (dataTransfer, target) => {
     if (target === undefined) {
       const addFiles: DummyNode[] = getNonDirItems(dataTransfer)
-        .map((item) => item.getAsFile())
+        .map(item => item.getAsFile())
         .filter((item): item is File => item !== null)
-        .map((file) => ({
+        .map(file => ({
           path: file.name,
           basename: file.name,
           type: 'file',
@@ -168,7 +166,7 @@ export const AntdCustomDragLayer = () => (
 export default {
   title: 'AntD File Manager',
   decorators: [
-    (InnerStory) => (
+    InnerStory => (
       <DndProvider backend={HTML5Backend}>
         <InnerStory />
       </DndProvider>

@@ -27,13 +27,13 @@ const calculateRelativeDragLayerTransform = (
   }
 }
 
-const AntdDragLayer: React.FC<AntdDragLayerProps> = (props) => {
+const AntdDragLayer: React.FC<AntdDragLayerProps> = props => {
   const {
     relativeToElement = { current: document.scrollingElement },
     additionalStyle = {}
   } = props
   const positionCalculator = useCallback(
-    (monitor) =>
+    monitor =>
       calculateRelativeDragLayerTransform(monitor, relativeToElement.current),
     [relativeToElement]
   )

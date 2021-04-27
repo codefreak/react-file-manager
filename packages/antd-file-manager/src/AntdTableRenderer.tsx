@@ -4,7 +4,7 @@ import {
   FileTextFilled,
   FolderFilled
 } from '@ant-design/icons'
-import React, { HTMLProps, useState } from 'react'
+import React, { HTMLProps, ReactElement, useState } from 'react'
 import { Button, Table as AntdTable } from 'antd'
 import { ColumnsType, TableProps as AntdTableProps } from 'antd/es/table'
 import {
@@ -29,7 +29,7 @@ const antdIconRenderer = <T extends AntdFileManagerNode>(
 
 const AntdTableRenderer = <T extends AntdFileManagerNode>(
   props: AntdTableRendererProps<T>
-) => {
+): ReactElement => {
   const {
     dataSource,
     dataKey,
@@ -59,8 +59,8 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       acceptFiles,
       dndStatusProps: itemDndStatusProps,
       hideNativeDragPreview, // we render a custom drag layer in this component
-      canDropItem: (source) => canDropItem(source, item),
-      onDropItem: (source) => {
+      canDropItem: source => canDropItem(source, item),
+      onDropItem: source => {
         onDropItem(source, item)
         endDrag(source)
       },
@@ -77,9 +77,9 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
       onDragOverItem: (source, dropTargetMonitor) => {
         props.onDragOverItem?.(source, item, dropTargetMonitor)
       },
-      onDragEndItem: (source) => endDrag(source),
-      onClick: (e) => props.onClickItem?.(item, e),
-      onDoubleClick: (e) => props.onDoubleClickItem?.(item, e)
+      onDragEndItem: source => endDrag(source),
+      onClick: e => props.onClickItem?.(item, e),
+      onDoubleClick: e => props.onDoubleClickItem?.(item, e)
     }
 
     if (additionalRowProperties) {
@@ -125,7 +125,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
         onEditCancel={() => setRenamingNode(undefined)}
         onEditStart={() => setRenamingNode(node)}
         editing={renamingNode === node}
-        onChange={(newName) => {
+        onChange={newName => {
           onRenameItem?.(node, newName)
         }}
       />
@@ -173,8 +173,8 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     return (
       <DnDTable
         {...tableProps}
-        onDropItem={(source) => onDropItem(source)}
-        canDropItem={(source) => canDropItem(source)}
+        onDropItem={source => onDropItem(source)}
+        canDropItem={source => canDropItem(source)}
         dndStatusProps={props.rootDndStatusProps}
       />
     )

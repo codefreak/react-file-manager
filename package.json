@@ -8,6 +8,8 @@
     "@babel/core": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
     "@babel/preset-react": "^7.12.13",
+    "@codefreak/eslint-config": "^0.1.0",
+    "@codefreak/prettier-config": "^0.1.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@storybook/addon-actions": "^6.1.18",
     "@storybook/addon-controls": "6.1.18",
@@ -15,12 +17,14 @@
     "@storybook/addon-links": "^6.1.18",
     "@storybook/addons": "^6.1.18",
     "@storybook/react": "^6.1.18",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
+    "babel-eslint": "^10.0.0",
     "babel-loader": "^8.2.2",
     "chromatic": "^5.6.3",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.2.0",
+    "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.23.2",
@@ -44,13 +48,11 @@
     "start": "run-s build watch",
     "lint:prettier": "prettier --check \"packages/*/src/**/*\"",
     "fix:prettier": "prettier --write \"packages/*/src/**/*\"",
-    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx \"packages/*/src/**/*\"",
+    "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx \"packages/*/src/**/*\"",
     "fix": "npm-run-all fix:*",
     "lint": "npm-run-all lint:*",
     "chromatic": "chromatic --exit-zero-on-changes"
   },
-  "devDependencies": {
-    "eslint-config-prettier": "^8.2.0"
-  }
+  "devDependencies": {}
 }

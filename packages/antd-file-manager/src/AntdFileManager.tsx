@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import FileManager, {
   FileManagerRenderComponent
 } from '@codefreak/react-file-manager'
@@ -11,12 +11,12 @@ const getAntdRendererByName = <T extends AntdFileManagerNode>(
   if (name === 'table') {
     return AntdTableRenderer
   }
-  throw `Unknown renderer ${name}`
+  throw TypeError(`Unknown renderer ${name}`)
 }
 
 const AntdFileManager = <T extends AntdFileManagerNode>(
   props: AntdFileManagerProps<T>
-) => {
+): ReactElement => {
   const { renderType = 'table' } = props
   const RenderType = getAntdRendererByName<T>(renderType)
   return <FileManager {...props} renderer={RenderType} />
