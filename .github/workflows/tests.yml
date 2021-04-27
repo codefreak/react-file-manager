@@ -1,0 +1,22 @@
+name: "Tests"
+
+on: [push, pull_request, release]
+jobs:
+  main:
+    runs-on: ubuntu-20.04
+    env:
+      NODE_OPTIONS: --max_old_space_size=4096
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install npm modules
+        run: yarn install
+      - name: Run Tests
+        run: yarn run test
