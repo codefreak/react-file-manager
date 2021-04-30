@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "4.6.2",
-    "antd": "4.15.3",
+    "antd": "4.15.4",
     "react": "17.0.2",
     "react-dnd": "14.0.2",
     "react-dnd-html5-backend": "14.0.0"
