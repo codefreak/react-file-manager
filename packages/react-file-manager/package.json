@@ -7,8 +7,7 @@
   "main": "dist/index",
   "types": "dist/index",
   "files": [
-    "dist",
-    "!dist/**/*.{stories,example}.*"
+    "dist"
   ],
   "scripts": {
     "clean": "rm -rf dist",
@@ -18,12 +17,6 @@
   },
   "peerDependencies": {
     "react-dnd": ">=14.0.0"
-  },
-  "devDependencies": {
-    "rc-table": "7.14.0",
-    "react": "17.0.2",
-    "react-dnd": "14.0.2",
-    "react-dnd-html5-backend": "14.0.0"
   },
   "publishConfig": {
     "access": "public"

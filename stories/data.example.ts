@@ -1,4 +1,4 @@
-import { AntdFileManagerNode } from './interfaces'
+import { AntdFileManagerNode } from '@codefreak/antd-file-manager'
 
 export interface DummyNode extends AntdFileManagerNode {
   size?: number

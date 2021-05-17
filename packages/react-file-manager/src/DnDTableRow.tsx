@@ -1,11 +1,10 @@
 import React, { ReactElement, useEffect, useMemo, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
-import { DefaultRecordType } from 'rc-table/es/interface'
 import { DnDTableRowProps, FileManagerItemDragType } from './interfaces'
 import { getDnDHtmlStatusProps } from './utils'
 
-export const DnDTableRow = <T extends DefaultRecordType>(
+export const DnDTableRow = <T extends Record<string, any>>(
   props: DnDTableRowProps<T>
 ): ReactElement => {
   const {

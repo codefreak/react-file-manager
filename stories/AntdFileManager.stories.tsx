@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react'
 import { useCallback, useState } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import AntdFileManager, { AntdFileManagerProps, AntdDragLayer } from './index'
+import AntdFileManager, { AntdFileManagerProps, AntdDragLayer } from '@codefreak/antd-file-manager'
 import sampleTableData, { DummyNode } from './data.example'
 
 import 'antd/dist/antd.css'
