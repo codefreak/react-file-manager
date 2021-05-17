@@ -31,8 +31,13 @@ const FileManager = <T extends FileManagerNode>(
   } = props
   const [selectedItems, setSelectedItems] = useState<T[]>([])
   const selectedItemKeys = useMemo(() => {
-    return props.selectedItemKeys || selectedItems.map((item) => item[dataKey as keyof T] as unknown as React.Key)
-  }, [selectedItems, props.selectedItemKeys])
+    return (
+      props.selectedItemKeys ||
+      selectedItems.map(
+        item => (item[dataKey as keyof T] as unknown) as React.Key
+      )
+    )
+  }, [selectedItems, props.selectedItemKeys, dataKey])
 
   const canDropFilesOnTarget = (
     items: DataTransferItemList,

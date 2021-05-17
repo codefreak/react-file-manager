@@ -56,6 +56,7 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
   ): DnDTableRowProps<FileManagerDragSource<T>> => {
     const rowProps: DnDTableRowProps<FileManagerDragSource<T>> = {
       enableDrop: item.type === 'directory',
+      disableDrag: item.path === renamingNode?.path,
       acceptFiles,
       dndStatusProps: itemDndStatusProps,
       hideNativeDragPreview, // we render a custom drag layer in this component

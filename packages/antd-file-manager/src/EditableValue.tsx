@@ -21,33 +21,38 @@ const EditableValue: React.FC<EditableValueProps> = props => {
   const { defaultValue, editing, onEditCancel, onEditStart, onChange } = props
   const [showEditIcon, setShowEditIcon] = useState<boolean>(false)
 
+  const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // select all on focus
+    e.target.select()
+  }
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      onEditCancel?.()
+      setShowEditIcon(false)
+    } else if (e.key === 'Enter') {
+      onChange?.(e.currentTarget.value)
+      setShowEditIcon(false)
+    }
+  }
+
   if (editing) {
     return (
       <Input
         size="small"
         defaultValue={defaultValue}
         autoFocus
-        onFocus={e => {
-          e.target.select()
-        }}
-        onKeyDown={e => {
-          if (e.key === 'Escape') {
-            onEditCancel?.()
-            setShowEditIcon(false)
-          } else if (e.key === 'Enter') {
-            onChange?.(e.currentTarget.value)
-            setShowEditIcon(false)
-          }
-        }}
+        onFocus={onFocus}
+        onKeyDown={onKeyDown}
       />
     )
   }
 
+  const onMouseOver = () => setShowEditIcon(true)
+  const onMouseLeave = () => setShowEditIcon(false)
+
   return (
-    <span
-      onMouseOver={() => setShowEditIcon(true)}
-      onMouseLeave={() => setShowEditIcon(false)}
-    >
+    <span onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
       {defaultValue}{' '}
       <EditOutlined
         onClick={() => onEditStart?.()}

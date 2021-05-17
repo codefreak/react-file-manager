@@ -63,6 +63,7 @@ export interface DnDTableRowProps<T> extends HTMLProps<HTMLTableRowElement> {
   hideNativeDragPreview: boolean
   dndStatusProps?: DnDStatusProps<HTMLTableRowElement>
   enableDrop: boolean
+  disableDrag?: boolean
 }
 
 export interface FileManagerRendererProps<RecordType extends FileManagerNode> {

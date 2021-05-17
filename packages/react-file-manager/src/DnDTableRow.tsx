@@ -4,7 +4,7 @@ import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend'
 import { DnDTableRowProps, FileManagerItemDragType } from './interfaces'
 import { getDnDHtmlStatusProps } from './utils'
 
-export const DnDTableRow = <T extends Record<string, any>>(
+export const DnDTableRow = <T extends Record<string, unknown>>(
   props: DnDTableRowProps<T>
 ): ReactElement => {
   const {
@@ -17,6 +17,7 @@ export const DnDTableRow = <T extends Record<string, any>>(
     dndStatusProps = {},
     acceptFiles,
     enableDrop,
+    disableDrag,
     ...additionalHtmlProps
   } = props
   const accept = useMemo(() => {
@@ -59,11 +60,13 @@ export const DnDTableRow = <T extends Record<string, any>>(
     }
   }, [preview, hideNativeDragPreview])
 
-  // This is necessary to make drop work on the whole table.
-  if (enableDrop) {
+  const enableDrag = !disableDrag
+  if (enableDrag && enableDrop) {
     drag(drop(rowRef))
-  } else {
+  } else if (enableDrag) {
     drag(rowRef)
+  } else if (enableDrop) {
+    drop(rowRef)
   }
 
   const rowHtmlProps = getDnDHtmlStatusProps(
