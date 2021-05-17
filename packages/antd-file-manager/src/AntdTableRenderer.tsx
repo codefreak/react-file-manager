@@ -165,7 +165,8 @@ const AntdTableRenderer = <T extends AntdFileManagerNode>(
     type: 'checkbox',
     onChange: (_, items) => {
       onSelectionChange(items)
-    }
+    },
+    selectedRowKeys: props.selectedItemKeys
   }
 
   const ConnectedDnDTable = (tableProps: HTMLProps<HTMLTableElement>) => {

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useMemo, useState } from 'react'
 import {
   FileManagerItemDragType,
   FileManagerNode,
@@ -26,9 +26,13 @@ const FileManager = <T extends FileManagerNode>(
     canDropItems = defaultCanDropItems,
     canDropFiles = false,
     renderer,
-    hideNativeDragPreview
+    hideNativeDragPreview,
+    dataKey
   } = props
   const [selectedItems, setSelectedItems] = useState<T[]>([])
+  const selectedItemKeys = useMemo(() => {
+    return props.selectedItemKeys || selectedItems.map((item) => item[dataKey as keyof T] as unknown as React.Key)
+  }, [selectedItems, props.selectedItemKeys])
 
   const canDropFilesOnTarget = (
     items: DataTransferItemList,
@@ -87,10 +91,10 @@ const FileManager = <T extends FileManagerNode>(
   }
 
   const RenderComponent: FileManagerRenderComponent<T> = renderer
-  // TODO: hideNativeDragPreview by argument
   return (
     <RenderComponent
       {...props}
+      selectedItemKeys={selectedItemKeys}
       acceptFiles={!!canDropFiles}
       hideNativeDragPreview={hideNativeDragPreview || false}
       onSelectionChange={onSelectionChange}

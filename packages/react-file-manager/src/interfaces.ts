@@ -69,6 +69,7 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   dataSource: RecordType[]
   dataKey: string
   acceptFiles: boolean
+  selectedItemKeys: React.Key[]
   onSelectionChange: (selectedItems: RecordType[]) => void
   onDragStartItem?: (
     source: RecordType
@@ -113,6 +114,7 @@ export type FileManagerProps<RecordType extends FileManagerNode> = Pick<
   | 'itemDndStatusProps'
   | 'rootDndStatusProps'
 > & {
+  selectedItemKeys?: React.Key[]
   onSelectionChange?: (selectedItems: RecordType[]) => void
   renderer: FileManagerRenderComponent<RecordType>
   canDropItems?:
