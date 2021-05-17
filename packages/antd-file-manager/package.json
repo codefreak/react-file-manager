@@ -1,6 +1,6 @@
 {
   "name": "@codefreak/antd-file-manager",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Ant Design File Manager Component for React",
   "license": "MIT",
   "author": "Henning Kasch",
@@ -16,7 +16,7 @@
     "prepare": "run-s clean build"
   },
   "dependencies": {
-    "@codefreak/react-file-manager": "^0.3.2"
+    "@codefreak/react-file-manager": "^0.3.3"
   },
   "peerDependencies": {
     "@ant-design/icons": "^4.5.0",
