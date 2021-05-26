@@ -99,9 +99,8 @@ export interface FileManagerRendererProps<RecordType extends FileManagerNode> {
   hideNativeDragPreview: boolean
 }
 
-export type FileManagerRenderComponent<
-  RecordType extends FileManagerNode
-> = React.ComponentType<FileManagerRendererProps<RecordType>>
+export type FileManagerRenderComponent<RecordType extends FileManagerNode> =
+  React.ComponentType<FileManagerRendererProps<RecordType>>
 
 /**
  * High-Level props for all kind of file managers.

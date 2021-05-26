@@ -34,7 +34,7 @@ const FileManager = <T extends FileManagerNode>(
     return (
       props.selectedItemKeys ||
       selectedItems.map(
-        item => (item[dataKey as keyof T] as unknown) as React.Key
+        item => item[dataKey as keyof T] as unknown as React.Key
       )
     )
   }, [selectedItems, props.selectedItemKeys, dataKey])
@@ -79,16 +79,20 @@ const FileManager = <T extends FileManagerNode>(
     }
   }
 
-  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] = draggedItem => {
-    // if we are dragging multiple items create a new drag source with all selected items
-    if (selectedItems.length > 1 && selectedItems.indexOf(draggedItem) !== -1) {
-      return {
-        type: FileManagerItemDragType,
-        items: [...selectedItems]
+  const onDragStart: FileManagerRendererProps<T>['onDragStartItem'] =
+    draggedItem => {
+      // if we are dragging multiple items create a new drag source with all selected items
+      if (
+        selectedItems.length > 1 &&
+        selectedItems.indexOf(draggedItem) !== -1
+      ) {
+        return {
+          type: FileManagerItemDragType,
+          items: [...selectedItems]
+        }
       }
+      return null // use original drag source
     }
-    return null // use original drag source
-  }
 
   const onSelectionChange = (items: T[]) => {
     setSelectedItems(items)
