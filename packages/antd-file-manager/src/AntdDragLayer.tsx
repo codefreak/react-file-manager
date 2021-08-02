@@ -51,7 +51,7 @@ const AntdDragLayer: React.FC<AntdDragLayerProps> = props => {
   const { isDragging, transform, item } = useDragLayer(collector)
   // Browsers render a default file icon with (+) when dragging a file
   // over a droppable area. I think this cannot be removed...?
-  if (!isDragging || isFileDrag(item)) {
+  if (!isDragging || isFileDrag(item) || item.items === undefined) {
     return null
   }
 
