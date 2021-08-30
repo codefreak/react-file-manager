@@ -25,10 +25,10 @@
     classnames "^2.2.6"
     rc-util "^5.9.4"
 
-"@ant-design/icons@^4.6.2":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-4.6.2.tgz#290f2e8cde505ab081fda63e511e82d3c48be982"
-  integrity sha512-QsBG2BxBYU/rxr2eb8b2cZ4rPKAPBpzAR+0v6rrZLp/lnyvflLH3tw1vregK+M7aJauGWjIGNdFmUfpAOtw25A==
+"@ant-design/icons@^4.6.3":
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/@ant-design/icons/-/icons-4.6.4.tgz#21b037dbb90ee1bb7c632cca057006e57d992fd9"
+  integrity sha512-li02J8ym721E24N3bw1oXRzFDV7m2MYQWs+WtJgVVjhNRv4sc6vL2a2M7SS8rWX3Uc/3GJfrokIJnMrmbIMuXQ==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-svg" "^4.0.0"
@@ -5153,13 +5153,13 @@ ansi-to-html@^0.6.11:
   dependencies:
     entities "^2.0.0"
 
-antd@4.16.11:
-  version "4.16.11"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.16.11.tgz#924116b0de7370f914e9de6c8c5a4bf019b3d668"
-  integrity sha512-7Tsx0sTjpSpgRqnXIRbuerqf4pu8+V1OPY4oZXXqTzuYPwKHdnbfXMg/L35IfeLtK1QcwgF4lfTR7bChJIcWSw==
+antd@4.16.13:
+  version "4.16.13"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.16.13.tgz#e9b9b4a590db28747aae1cab98981649a35880af"
+  integrity sha512-EMPD3fzKe7oayx9keD/GA1oKatcx7j5CGlkJj5eLS0/eEDDEkxVj3DFmKOPuHYt4BK7ltTzMFS+quSTmqUXPiw==
   dependencies:
     "@ant-design/colors" "^6.0.0"
-    "@ant-design/icons" "^4.6.2"
+    "@ant-design/icons" "^4.6.3"
     "@ant-design/react-slick" "~0.28.1"
     "@babel/runtime" "^7.12.5"
     array-tree-filter "^2.1.0"
@@ -5195,7 +5195,7 @@ antd@4.16.11:
     rc-tooltip "~5.1.1"
     rc-tree "~4.2.1"
     rc-tree-select "~4.3.0"
-    rc-trigger "^5.2.1"
+    rc-trigger "^5.2.10"
     rc-upload "~4.3.0"
     rc-util "^5.13.1"
     scroll-into-view-if-needed "^2.2.25"
@@ -13171,10 +13171,21 @@ rc-tree@~4.2.1:
     rc-util "^5.0.0"
     rc-virtual-list "^3.0.1"
 
-rc-trigger@^5.0.0, rc-trigger@^5.0.4, rc-trigger@^5.1.2, rc-trigger@^5.2.1:
+rc-trigger@^5.0.0, rc-trigger@^5.0.4, rc-trigger@^5.1.2:
   version "5.2.8"
   resolved "https://registry.yarnpkg.com/rc-trigger/-/rc-trigger-5.2.8.tgz#27c8291c24518b8f11d76c848f5424e0c429e94a"
   integrity sha512-Tn84oGmvNBLXI+ptpzxyJx4ArKTduuB6l74ShDLhDaJaF9f5JAMizfx31L30ELVIzRr3Ze4sekG7rzwPGwVOdw==
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    classnames "^2.2.6"
+    rc-align "^4.0.0"
+    rc-motion "^2.0.0"
+    rc-util "^5.5.0"
+
+rc-trigger@^5.2.10:
+  version "5.2.10"
+  resolved "https://registry.yarnpkg.com/rc-trigger/-/rc-trigger-5.2.10.tgz#8a0057a940b1b9027eaa33beec8a6ecd85cce2b1"
+  integrity sha512-FkUf4H9BOFDaIwu42fvRycXMAvkttph9AlbCZXssZDVzz2L+QZ0ERvfB/4nX3ZFPh1Zd+uVGr1DEDeXxq4J1TA==
   dependencies:
     "@babel/runtime" "^7.11.2"
     classnames "^2.2.6"
