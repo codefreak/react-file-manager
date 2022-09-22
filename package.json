@@ -6,8 +6,8 @@
   ],
   "dependencies": {
     "@ant-design/icons": "4.7.0",
-    "@babel/core": "7.19.0",
-    "@babel/preset-env": "7.19.0",
+    "@babel/core": "7.19.1",
+    "@babel/preset-env": "7.19.1",
     "@babel/preset-react": "7.18.6",
     "@codefreak/eslint-config": "0.1.3",
     "@codefreak/prettier-config": "0.1.2",
