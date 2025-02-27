@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@ant-design/icons": "4.8.3",
+    "@ant-design/icons": "5.6.1",
     "@babel/core": "7.26.9",
     "@babel/preset-env": "7.26.9",
     "@babel/preset-react": "7.26.3",
